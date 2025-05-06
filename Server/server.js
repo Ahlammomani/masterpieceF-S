@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const { sequelize } = require("./models");
 const cookieParser = require("cookie-parser");
-const userRoutes = require("./routes/userRoutes");
+const userRoutes = require ("./routes/userRoutes")
 const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const productCategoryRoutes = require('./routes/ProductCategoryRoute');
@@ -29,13 +29,13 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Start the server
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
 // Routes
-app.use('/users', userRoutes);
+app.use('/users', userRoutes)
 app.use('/auth', google);
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
