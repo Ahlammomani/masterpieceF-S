@@ -60,7 +60,7 @@ exports.googleLogin = async (req, res) => {
 // 🟢 تسجيل مستخدم جديد
 exports.signup = async (req, res) => {
   try {
-    const { firstName,lastName, email, password } = req.body;
+    const { firstName,lastName, email, password,phoneNumber } = req.body;
 
     // التحقق إذا كان المستخدم موجودًا بالفعل
     const existingUser = await User.findOne({ where: { email } });
@@ -72,7 +72,7 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // إنشاء المستخدم
-    const newUser = await User.create({ lastName,firstName, email, password: hashedPassword });
+    const newUser = await User.create({ lastName,firstName, email,phoneNumber, password: hashedPassword });
 
     res.status(201).json({ message: 'تم إنشاء الحساب بنجاح', user: newUser });
   } catch (error) {
@@ -103,7 +103,15 @@ exports.login = async (req, res) => {
     // حفظ التوكن في الكوكيز
     res.cookie('token', token, { httpOnly: true, secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 });
 
-    res.json({ message: 'تم تسجيل الدخول بنجاح', token });
+    res.json({
+  message: 'تم تسجيل الدخول بنجاح',
+  token,
+  user: {
+    id: user.id,
+    email: user.email,
+    // أي بيانات أخرى
+  }
+});
   } catch (error) {
     res.status(500).json({ message: 'حدث خطأ أثناء تسجيل الدخول', error: error.message });
   }
@@ -129,5 +137,43 @@ exports.protect = async (req, res, next) => {
     next();
   } catch (error) {
     res.status(401).json({ message: 'جلسة غير صالحة، يرجى تسجيل الدخول مجددًا' });
+  }
+};
+// GET /users/profile
+exports. getProfile = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'firstname','lastName', 'email', 'phone'] // بدون كلمة السر
+    });
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ error: "خطأ في جلب الملف الشخصي" });
+  }
+};
+
+
+// PUT /users/profile
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ error: "المستخدم غير موجود" });
+    }
+
+    const { phoneNumber, password } = req.body;
+
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    await user.save();
+
+    res.json({ message: "تم تحديث البيانات بنجاح" });
+  } catch (err) {
+    res.status(500).json({ error: "فشل في تحديث البيانات" });
   }
 };

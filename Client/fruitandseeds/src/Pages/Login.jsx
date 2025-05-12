@@ -9,17 +9,18 @@ const Login = () => {
   const navigate = useNavigate();
   const [cookies, setCookie] = useCookies(['user']);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await API.post("/users/login", user);
-      // Set user cookie after successful login
-      setCookie('user', response.data.user, { path: '/' });
-      navigate('/');
-    } catch (err) {
-      setError(err.response?.data?.message || "An error occurred!");
-    }
-  };
+ const handleLogin = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await API.post("/users/login", user);
+    // احفظ التوكن وبيانات المستخدم
+    setCookie('token', response.data.token, { path: '/' });
+    setCookie('user', response.data.user, { path: '/' });
+    navigate('/');
+  } catch (err) {
+    setError(err.response?.data?.message || "An error occurred!");
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FDFAF6] relative overflow-hidden">

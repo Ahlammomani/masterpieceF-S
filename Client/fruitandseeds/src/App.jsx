@@ -6,8 +6,8 @@ import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import Menu from "./pages/Menu";
 import ContactUs from "./pages/ContactUs";
-// import Settings from "./pages/Settings";
-// import Cart from "./pages/Cart";
+ import Details from "./pages/Details";
+import Cart from "./pages/Cart";
 import Navbar from "./Components/Navbar";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin/Dashboard";
@@ -53,8 +53,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/Admin/*" element={<Admin />} />
-        {/* <Route path="/settings" element={<Settings />} /> */}
-        {/* <Route path="/cart" element={<Cart />} /> */}
+        <Route path="/Details/:productId" element={<Details />} />
+        <Route path="/cart" element={<Cart />} />
       </Routes>
       </Suspense>
       </ConditionalLayout>
@@ -62,7 +62,7 @@ function App() {
           position={{ bottom: "20px", right: "100px" }} // Offset to avoid overlap with chatbot
           phoneNumber="+962777730914" // Replace with your actual WhatsApp number
           profileName="Fruit and seeds"
-          profileImage="../assets/logo.png" // Replace with your actual profile image URL
+          profileImage="./assets/logo.png" // Replace with your actual profile image URL
           welcomeText="Need direct assistance? Our farm experts are ready to help!"
         />
     </Router>

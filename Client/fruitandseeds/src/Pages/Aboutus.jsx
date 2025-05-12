@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 const CreativeSection = () => {
   const [videoStarted, setVideoStarted] = useState(false);
 
-  // تأثيرات الحركة
+ 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

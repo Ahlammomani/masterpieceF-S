@@ -10,7 +10,11 @@ const productRoutes = require("./routes/productRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const productCategoryRoutes = require('./routes/ProductCategoryRoute');
 const google=require("./routes/googleRoutes");
-dotenv.config();
+const imageRoutes =require ("./routes/imageRoutes")
+const reviewRoutes = require('./routes/reviewRoutes');
+const Cart = require('./routes/cartRoutes');
+require('dotenv').config();
+
 
 const app = express();
 app.use(cookieParser());
@@ -40,3 +44,6 @@ app.use('/auth', google);
 app.use("/api/products", productRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use('/api/product-categories', productCategoryRoutes);
+app.use('/api/images',imageRoutes);
+app.use('/api', reviewRoutes);
+app.use('/api/cart', Cart);

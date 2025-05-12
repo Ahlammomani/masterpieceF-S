@@ -3,12 +3,12 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 const path = require("path");
-const { createProduct, getProducts } = require("../controllers/productController");
+const { createProduct, getProducts , getProductById,getSimilarProducts} = require("../controllers/productController");
 
 // إعداد مكان حفظ الصورة واسمها
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // تأكد إن المجلد موجود
+    cb(null, "uploads/"); 
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + path.extname(file.originalname)); // اسم عشوائي
@@ -22,5 +22,9 @@ router.post("/", upload.array("image", 5), createProduct);
 
 // GET كل المنتجات
 router.get("/", getProducts);
+
+router.get('/:id', getProductById);
+
+router.get('/:id/similar', getSimilarProducts);
 
 module.exports = router;
