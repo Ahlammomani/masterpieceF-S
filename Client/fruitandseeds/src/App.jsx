@@ -12,6 +12,8 @@ import Navbar from "./Components/Navbar";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin/Dashboard";
 import Footer from "./Components/Footer";
+import Checkout from "./Pages/Checkout";
+import OrderConfirmation from './Pages/OrderConfirmation';
 import WhatsApp from "./Components/WhatsApp";
 import { CookiesProvider } from 'react-cookie';
 
@@ -51,8 +53,10 @@ function App() {
         <Route path="/contactus" element={<ContactUs />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path ="/Checkout" element ={<Checkout/>}/>
         <Route path="/profile" element={<Profile />} />
         <Route path="/Admin/*" element={<Admin />} />
+        <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/Details/:productId" element={<Details />} />
         <Route path="/cart" element={<Cart />} />
       </Routes>

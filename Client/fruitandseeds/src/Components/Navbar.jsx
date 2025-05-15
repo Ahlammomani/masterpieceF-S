@@ -13,8 +13,8 @@ const Navbar = () => {
 
   useEffect(() => {
     // Check if user cookie exists on component mount
-    setIsUserLoggedIn(!!cookies.user);
-  }, [cookies.user]);
+    setIsUserLoggedIn(!!cookies.userId);
+  }, [cookies.userId]);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -24,14 +24,23 @@ const Navbar = () => {
     setIsProfileDropdownOpen(!isProfileDropdownOpen);
   };
 
-  const handleLogout = () => {
-    // Remove user cookie and update state
-    removeCookie('user', { path: '/' });
+ const handleLogout = async () => {
+  try {
+    await fetch('/users/logout', {
+      method: 'POST',
+      credentials: 'include', // important to send cookies
+    });
+
+    removeCookie('token', { path: '/' });
+    removeCookie('userId', { path: '/' });
+
     setIsUserLoggedIn(false);
     setIsProfileDropdownOpen(false);
     navigate('/');
-  };
-
+  } catch (err) {
+    console.error("Logout failed:", err);
+  }
+};
   return (
     <nav className="bg-[#FCF8F3] border-b border-[#FF8BA7] shadow-sm">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">

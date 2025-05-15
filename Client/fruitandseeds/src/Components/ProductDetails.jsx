@@ -1,7 +1,54 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
 
-const ProductDetails = ({ product, images, mainImage, setMainImage, handleAddToCart }) => {
+const ProductDetails = ({ product, images, mainImage, setMainImage }) => {
+  const navigate = useNavigate();
+const [cookies] = useCookies(['token', 'userId']);
+  const handleBuyNow = async () => {
+if (!cookies.token || !cookies.userId) {
+  navigate('/login', { state: { from: 'checkout' } });
+  return;
+}
+console.log('token:', cookies.token);
+console.log('userId:', cookies.userId);
+    try {
+      // Create a new order with this single product
+      const response = await fetch('http://localhost:5000/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${cookies.token}`
+        },
+         credentials: 'include',
+        body: JSON.stringify({
+         userId: cookies.userId,
+          items: [{
+            productId: product.id,
+            quantity: 1,
+            price: product.price
+          }],
+          totalPrice: product.price,
+          status: 'pending',
+          paymentMethod: 'card' // default, can be changed in checkout
+        })
+      });
+
+      if (!response.ok) {
+  const text = await response.text(); // Try to read what went wrong
+  console.error('Failed response:', response.status, text);
+  throw new Error('Order creation failed');
+}
+
+      const order = await response.json();
+      navigate('/checkout', { state: { orderId: order.id } });
+    } catch (error) {
+      console.error('Error creating order:', error);
+      // Handle error (show toast or message)
+    }
+  };
+
   return (
     <div className="relative md:flex md:gap-12 items-start">
       {/* Left column - Images */}
@@ -113,18 +160,17 @@ const ProductDetails = ({ product, images, mainImage, setMainImage, handleAddToC
           </div>
         )}
 
-        {/* Add to cart button */}
-        <button
-          disabled={product.quantity <= 0}
-          onClick={handleAddToCart}
-          className={`w-full py-4 px-6 rounded-full text-white font-bold text-lg transition-all duration-300 relative overflow-hidden ${
-            product.quantity > 0 ? 
-              'bg-[#FF8BA7] hover:bg-[#FF8BA7] shadow-lg' : 
-              'bg-gray-400 cursor-not-allowed'
-          }`}
-        >
-          {product.quantity > 0 ? 'أضف إلى السلة' : 'غير متوفر'}
-        </button>
+        {/* Buy Now Button */}
+        <div className="mt-8">
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            onClick={handleBuyNow}
+            className="w-full bg-gradient-to-r from-[#FF8BA7] to-[#FF6B6B] text-white py-3 px-6 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            Buy Now
+          </motion.button>
+        </div>
       </div>
     </div>
   );

@@ -5,6 +5,8 @@ import pic1 from "../assets/Khome.png"
 import pic2 from "../assets/Shome.png"
 import pic3 from "../assets/Phome.png"
 import pic4 from "../assets/Whome.png"
+import FAQ from "../Components/FAQ"
+import Viedokides from "../Components/viedokides"
 
 const Home = () => {
   return (
@@ -19,7 +21,10 @@ const Home = () => {
           <img src={pic4} alt="healthy dessert 5" className="w-full h-52 object-cover" />
         </div>
       </div>
+      <FAQ/>
+      <Viedokides/>
     </div>
+
   )
 }
 

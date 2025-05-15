@@ -13,7 +13,6 @@ const ProductDetailsPage = () => {
   const [cookies] = useCookies(['user']);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
 
-  // Product details state
   const [product, setProduct] = useState(null);
   const [images, setImages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,11 +42,9 @@ const ProductDetailsPage = () => {
       try {
         setLoading(true);
         
-        // Fetch product data
         const productResponse = await axios.get(`http://localhost:5000/api/products/${productId}`);
         setProduct(productResponse.data);
         
-        // Fetch product images
         const imagesResponse = await axios.get('http://localhost:5000/api/images');
         const productImages = imagesResponse.data
           .filter(img => img.productId == productId)
@@ -61,7 +58,7 @@ const ProductDetailsPage = () => {
         if (productImages.length > 0) {
           setMainImage(productImages[0].url);
         }
-        
+
         setLoading(false);
       } catch (err) {
         console.error('Error fetching product data:', err);
@@ -74,52 +71,15 @@ const ProductDetailsPage = () => {
   }, [productId]);
 
   // Check authentication status
-  useEffect(() => {
-    if (cookies.user !== undefined) {
-      setIsAuthChecked(true);
-    }
-  }, [cookies.user]);
+  // useEffect(() => {
+  //   if (cookies.user !== undefined) {
+  //     setIsAuthChecked(true);
+  //   }
+  // }, [cookies.user]);
 
-  const handleAddToCart = async () => {
-    try {
-      const response = await fetch('http://localhost:5000/api/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include',
-        body: JSON.stringify({
-          productId: product.id,
-          quantity: 1
-        })
-      });
-      
-      if (response.status === 401) {
-        navigate('/login', { 
-          state: { 
-            from: location.pathname,
-            message: 'يجب تسجيل الدخول لإضافة منتجات للسلة'
-          } 
-        });
-        return;
-      }
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'فشل إضافة المنتج للسلة');
-      }
-
-      alert('تمت الإضافة للسلة بنجاح!');
-    } catch (error) {
-      console.error('Error adding to cart:', error);
-      alert(error.message);
-    }
-  };
-
-  if (!isAuthChecked) {
-    return <div className="text-center py-4">جاري التحقق من المصادقة...</div>;
-  }
+  // if (!isAuthChecked) {
+  //   return <div className="text-center py-4">جاري التحقق من المصادقة...</div>;
+  // }
 
   if (loading) {
     return (
@@ -165,7 +125,6 @@ const ProductDetailsPage = () => {
           images={images} 
           mainImage={mainImage} 
           setMainImage={setMainImage}
-          handleAddToCart={handleAddToCart}
         />
         
         <ProductReviews 

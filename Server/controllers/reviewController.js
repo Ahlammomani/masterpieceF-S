@@ -1,40 +1,45 @@
 const { Review, User } = require('../models');
 const jwt = require('jsonwebtoken');
-const JWT_SECRET = process.env.JWT_SECRET || 'your_secret_key';
+const JWT_SECRET = process.env.JWT_SECRET ;
 
 // تحقق من التوكن واستخراج userId
-const verifyUser = (req) => {
-  try {
-    // 1. الحصول على التوكن من الكوكيز
-    const token = req.cookies.token;
-    if (!token) return { error: 'No token provided', status: 401 };
-    
-    // 2. تحقق من التوكن
-    const decoded = jwt.verify(token, JWT_SECRET);
-    if (!decoded || !decoded.id) return { error: 'Invalid token', status: 401 };
-    
-    return { userId: decoded.id };
-  } catch (err) {
-    return { error: 'Token verification failed', status: 401 };
-  }
-};
+// const verifyUser = (req) => {
+//   try {
+//     let token;
+
+//     // 1. من الكوكيز
+//     if (req.cookies?.token) {
+//       token = req.cookies.token;
+//     }
+
+//     // 2. أو من الهيدر (Bearer token)
+//     else if (req.headers.authorization?.startsWith('Bearer ')) {
+//       token = req.headers.authorization.split(' ')[1];
+//     }
+
+//     if (!token) return { error: 'No token provided', status: 401 };
+
+//     const decoded = jwt.verify(token, JWT_SECRET);
+//     if (!decoded || !decoded.id) return { error: 'Invalid token', status: 401 };
+
+//     return { userId: decoded.id };
+//   } catch (err) {
+//     return { error: 'Token verification failed', status: 401 };
+//   }
+// };
+
 
 // إنشاء تقييم جديد
 // في ملف reviewController.js (السيرفر)
+
+
+// إنشاء تقييم جديد
 exports.createReview = async (req, res) => {
   try {
-    // التحقق من المستخدم أولاً
-    const { userId, error, status } = verifyUser(req);
-    if (error) {
-      return res.status(status || 401).json({ 
-        success: false, 
-        error 
-      });
-    }
+    const userId = req.user.id;
+    const { content, rating } = req.body;
+    const productId = req.params.productId;
 
-    const { content, rating, productId } = req.body;
-    
-    // تحقق من وجود جميع البيانات المطلوبة
     if (!content || !rating || !productId) {
       return res.status(400).json({
         success: false,
@@ -42,21 +47,20 @@ exports.createReview = async (req, res) => {
       });
     }
 
-    // أنشئ المراجعة باستخدام userId من verifyUser
     const review = await Review.create({
       content,
       rating,
       productId,
-      userId: userId // استخدم userId من verifyUser
+      userId
     });
 
-    // أعد الاستجابة مع بيانات كاملة
-    const fullReview = await Review.findByPk(review.id, {
-      include: [{
-        model: User,
-        attributes: ['id', 'username']
-      }]
-    });
+ const fullReview = await Review.findByPk(review.id, {
+  include: [{
+    model: User,
+    as: 'user', // ← هذا هو المفتاح
+    attributes: ['id', 'firstName']
+  }]
+});
 
     res.status(201).json({
       success: true,
@@ -64,7 +68,7 @@ exports.createReview = async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Error:', error);
+    console.error('🔥 Server Error:', error);
     res.status(500).json({
       success: false,
       error: error.message
@@ -72,6 +76,39 @@ exports.createReview = async (req, res) => {
   }
 };
 
-exports. getReviwe =async(req,res)=>{
-  
-}
+
+
+exports.getReviews = async (req, res) => {
+  try {
+    const productId = req.params.productId;
+
+    // Fetch reviews with user details
+    const reviews = await Review.findAll({
+      where: { productId },
+      include: [{
+        model: User,
+        as: 'user',  // This should be the alias for the user relation in Sequelize
+        attributes: ['id', 'firstName']  // Only fetch necessary user details
+      }]
+    });
+
+    if (!reviews.length) {
+      return res.status(404).json({
+        success: false,
+        error: 'No reviews found for this product'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: reviews
+    });
+
+  } catch (error) {
+    console.error('🔥 Server Error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
+};

@@ -2,7 +2,7 @@ const { Image } = require('../models');
 
 const getproductimage = async (req, res) => {
   try {
-    console.log('Attempting to fetch images...');
+    // console.log('Attempting to fetch images...');
     
     const images = await Image.findAll({
       attributes: ['id', 'productId', 'image'], 
@@ -16,7 +16,7 @@ const getproductimage = async (req, res) => {
       return res.status(404).json({ message: 'No images found' });
     }
 
-    console.log('Successfully fetched images:', images.length);
+    // console.log('Successfully fetched images:', images.length);
     res.json(images);
   } catch (error) {
     console.error('Detailed error:', {

@@ -15,8 +15,8 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const res = await API.get("/users/profile");
-        setUser(res.data.user);
-        setphoneNumber(res.data.user.phoneNumber || "");
+        setUser(res.data.userId);
+        setphoneNumber(res.data.userId.phoneNumber || "");
       } catch {
         navigate("/login");
       }

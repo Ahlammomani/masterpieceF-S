@@ -163,4 +163,6 @@ const getSimilarProducts = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+
   module.exports = { createProduct, getProducts, getProductById ,getSimilarProducts};

@@ -1,32 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
-const ProductReviews = ({ productId, user }) => {
+const ProductReviews = ({ productId }) => {
+  const [userId, setUserId] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [rating, setRating] = useState(0);
   const [reviewContent, setReviewContent] = useState('');
   const [reviewLoading, setReviewLoading] = useState(false);
   const [reviewError, setReviewError] = useState('');
 
-  // Fetch reviews
+
   useEffect(() => {
+  const storedUserId = Cookies.get('userId'); // 👈 تأكد أنه نفس الاسم
+  if (storedUserId) {
+    setUserId(storedUserId);
+    console.log("User ID from cookie:", storedUserId);
+  }
+}, []);
+  //Fetch reviews
+ useEffect(() => {
     const fetchReviews = async () => {
       try {
         const response = await axios.get(`http://localhost:5000/api/products/${productId}/reviews`);
-        setReviews(response.data);
+        
+        // Assuming the response contains the reviews in `data.data`
+        if (response.data.success) {
+          setReviews(response.data.data); // Update reviews state
+        } else {
+          setError('Failed to fetch reviews'); // Handle case where no reviews are fetched
+        }
       } catch (err) {
         console.error('Error fetching reviews:', err);
+        setError('Failed to fetch reviews'); // Set error state if something goes wrong
+      } finally {
+        // setLoading(false); // Stop loading once the request completes
       }
     };
 
     fetchReviews();
   }, [productId]);
-
   // Submit new review
   const submitReview = async (e) => {
     e.preventDefault();
     
-    if (!user) {
+    if (!userId) {
       setReviewError('يجب تسجيل الدخول أولاً لإضافة تقييم');
       return;
     }
@@ -45,7 +63,7 @@ const ProductReviews = ({ productId, user }) => {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user?.token || ''}`
+            'Authorization': `Bearer ${userId?.token || ''}`
           }
         }
       );
@@ -67,7 +85,7 @@ const ProductReviews = ({ productId, user }) => {
       <h2 className="text-2xl font-bold text-[#97BE5A] mb-8">Product Reviews</h2>
       
       {/* Add Review Form */}
-      {user ? (
+      {userId ? (
         <form onSubmit={submitReview} className="mb-8 bg-gray-50 p-6 rounded-lg">
           <div className="mb-4">
             <label className="block text-lg font-medium text-[#99BC85] mb-2">Your Rating</label>
@@ -124,27 +142,27 @@ const ProductReviews = ({ productId, user }) => {
             >
               <div className="flex items-start mb-4">
                 <div className="w-12 h-12 rounded-full bg-[#99BC85] flex items-center justify-center mr-4 overflow-hidden text-[#FDFAF6]">
-                  {review.user?.avatar ? (
+                  {review.userId?.avatar ? (
                     <img 
-                      src={review.user.avatar} 
-                      alt={review.user.name || 'User'} 
+                      src={review.userId.avatar} 
+                      alt={review.userId.name || 'userId'} 
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <span className="text-xl">
-                      {(review.user?.name || 'U').charAt(0).toUpperCase()}
+                      {(review.userId?.name || 'U').charAt(0).toUpperCase()}
                     </span>
                   )}
                 </div>
                 <div className="flex-1">
                   <div className="flex justify-between items-start">
-                    <h4 className="font-bold text-lg text-[#97BE5A]">{review.user?.name || 'User'}</h4>
+                    <h4 className="font-bold text-lg text-[#97BE5A]">{review.userId?.name || 'userId'}</h4>
                     <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <span key={i} className={i < review.rating ? 'text-yellow-400' : 'text-gray-300'}>
-                          ★
-                        </span>
-                      ))}
+                    {[...Array(5)].map((_, i) => (
+  <span key={`${review.id}-${i}`} className={i < review.rating ? 'text-yellow-400' : 'text-gray-300'}>
+    ★
+  </span>
+))}
                     </div>
                   </div>
                   <div className="text-sm text-gray-500 mb-2">

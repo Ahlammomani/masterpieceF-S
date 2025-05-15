@@ -13,33 +13,33 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await API.post("/users/signup", user);
-      setCookie('user', response.data.user, { path: '/' });
+      const response = await API.post("/users/signup", user,{ withCredentials: true});
+      //setCookie('user', response.data.user, { path: '/' });
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || "An error occurred!");
     }
   };
 
-  const handleFacebookSignup = () => {
-    window.location.href = `${API.defaults.baseURL}/auth/facebook`;
-  };
+  // const handleFacebookSignup = () => {
+  //   window.location.href = `${API.defaults.baseURL}/auth/facebook`;
+  // };
 
-  const handleGoogleLogin = async (response) => {
-    if (response.error) {
-      setError("Google Sign-In failed");
-      return;
-    }
+  // const handleGoogleLogin = async (response) => {
+  //   if (response.error) {
+  //     setError("Google Sign-In failed");
+  //     return;
+  //   }
 
-    try {
-      const res = await API.post("/auth/google", { credential: response.credential });
-      setCookie('user', res.data.user, { path: '/' });
-      navigate("/");
-    } catch (error) {
-      setError("Google login failed. Try again.");
-      console.error(error);
-    }
-  };
+  //   try {
+  //     const res = await API.post("/auth/google", { credential: response.credential });
+  //     setCookie('user', res.data.user, { path: '/' });
+  //     navigate("/");
+  //   } catch (error) {
+  //     setError("Google login failed. Try again.");
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FDFAF6] relative overflow-hidden">
@@ -133,23 +133,7 @@ const Signup = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <GoogleLogin
-              onSuccess={handleGoogleLogin}
-              onError={() => setError("Google login failed")}
-              useOneTap
-            />
-
-            <button
-              type="button"
-              onClick={handleFacebookSignup}
-              className="flex items-center justify-center p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition"
-            >
-              <svg className="h-5 w-5 text-[#97BE5A]" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z" />
-              </svg>
-            </button>
-          </div>
+       
 
           <div className="mt-4 text-center text-sm text-gray-600">
             Already have an account?

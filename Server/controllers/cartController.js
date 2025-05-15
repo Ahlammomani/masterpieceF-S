@@ -3,10 +3,11 @@ const Product = require('../models/Product');
 const jwt = require('jsonwebtoken');
 
 // مساعد لاستخراج اليوزر من الكوكي
-const getUserIdFromCookie = (req) => {
-  const token = req.cookies.jwt; // افترضنا أن اسم الكوكي هو jwt
+const getUserIdFromToken = (req) => {
+  const token = req.cookies?.token; // استخراج التوكن من الكوكي
+
   if (!token) return null;
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded.id;
@@ -14,6 +15,8 @@ const getUserIdFromCookie = (req) => {
     return null;
   }
 };
+
+
 
 // الحصول على محتويات الكارت
 exports.getCartItems = async (req, res) => {
@@ -33,11 +36,10 @@ exports.getCartItems = async (req, res) => {
   }
 };
 
-// إضافة منتج إلى الكارت
 exports.addToCart = async (req, res) => {
-   try {
-    // التحقق من وجود مستخدم مسجل
-    if (!req.userId) { // افترضنا أنك تحصل على userId من middleware المصادقة
+  try {
+    const userId = getUserIdFromToken(req);
+    if (!userId) {
       return res.status(401).json({ 
         error: 'Unauthorized',
         loginRequired: true
@@ -46,12 +48,37 @@ exports.addToCart = async (req, res) => {
 
     const { productId, quantity } = req.body;
 
-    // ... باقي منطق الإضافة للسلة
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      return res.status(404).json({ error: 'المنتج غير موجود' });
+    }
+
+    let cartItem = await Cart.findOne({
+      where: {
+        userId,
+        productId
+      }
+    });
+
+    if (cartItem) {
+      cartItem.quantity += quantity;
+      await cartItem.save();
+    } else {
+      cartItem = await Cart.create({
+        userId,
+        productId,
+        quantity
+      });
+    }
+
     res.status(200).json({ success: true, cartItem });
+
   } catch (err) {
+    console.error('خطأ في إضافة للكارت:', err);
     res.status(500).json({ error: 'خطأ في السيرفر' });
   }
 };
+
 
 // تحديث كمية منتج في الكارت
 exports.updateCartItem = async (req, res) => {
