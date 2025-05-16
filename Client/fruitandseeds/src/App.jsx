@@ -12,6 +12,7 @@ import Navbar from "./Components/Navbar";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin/Dashboard";
 import Footer from "./Components/Footer";
+import NotFound from './Pages/NotFound';
 import Checkout from "./Pages/Checkout";
 import OrderConfirmation from './Pages/OrderConfirmation';
 import WhatsApp from "./Components/WhatsApp";
@@ -59,6 +60,7 @@ function App() {
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/Details/:productId" element={<Details />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>
       </ConditionalLayout>

@@ -1,11 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const { createCategory, getCategories } = require("../controllers/categoryController");
+const {
+  createCategory,
+  getCategories,
+  deleteCategory,
+  updateCategory
+} = require("../controllers/categoryController");
 
-// POST - إنشاء قسم جديد
 router.post("/", createCategory);
-
-// GET - جلب كل الأقسام
 router.get("/", getCategories);
+router.delete("/:id", deleteCategory);
+router.put("/:id", updateCategory);
 
 module.exports = router;

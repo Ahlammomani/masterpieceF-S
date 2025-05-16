@@ -16,6 +16,7 @@ const reviewRoutes = require('./routes/reviewRoutes');
 const Cart = require('./routes/cartRoutes');
 const Order=require('./routes/orderRoutes');
 const Reviews=require('./routes/reviewRoutes');
+const Contact = require('./routes/contactRoutes');
 
 
 
@@ -49,11 +50,20 @@ app.use('/api', reviewRoutes);
 app.use('/api/cart', Cart);
 app.use('/api/orders',Order);
 app.use('/api',Reviews);
+app.use('/api',Contact);
+
+// not found
+app.use((req, res, next) => {
+  res.status(404).json({ message: "404 - Page Not Found" });
+});
+
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
 
 // Routes
 // app.use('/users', userRoutes)

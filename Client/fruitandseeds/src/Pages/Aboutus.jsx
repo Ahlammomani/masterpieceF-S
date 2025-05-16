@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import aboutuspage from '../assets/aboutuspage.jpeg'
 
 const CreativeSection = () => {
   const [videoStarted, setVideoStarted] = useState(false);
@@ -194,64 +195,58 @@ const CreativeSection = () => {
         </div>
       </section>
 
-      {/* Activities Section */}
-      <section className="py-20 px-4 max-w-6xl mx-auto">
-        <motion.h2 
-          className="text-3xl font-bold text-center text-gray-900 mb-16"
+  <section className="py-16 px-4 max-w-6xl mx-auto">
+      <div className="flex flex-col md:flex-row items-center gap-8">
+        {/* Left side - Text content */}
+        <motion.div 
+          className="md:w-1/2"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
         >
-          Our World
-        </motion.h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Activity 1 */}
-          <motion.div 
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            viewport={{ once: true }}
-          >
-            <div className="text-[#97BE5A] text-4xl mb-4">🚀</div>
-            <h3 className="text-xl font-semibold mb-3">Innovation</h3>
-            <p className="text-gray-600">
-              We constantly research and develop new technologies to stay ahead of industry trends.
-            </p>
-          </motion.div>
+          {/* <h2 className="text-2xl font-bold text-pink-400 mb-3">Hello & Welcome!</h2>
+          <h3 className="text-xl font-medium text-gray-700 mb-2">About Me</h3>
+          <h4 className="text-lg font-medium text-gray-600 mb-5">Baker & Dessert Enthusiast</h4> */}
           
-          {/* Activity 2 */}
-          <motion.div 
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-          >
-            <div className="text-[#97BE5A] text-4xl mb-4">🤝</div>
-            <h3 className="text-xl font-semibold mb-3">Community</h3>
-            <p className="text-gray-600">
-              We actively participate in local communities and support various charitable initiatives.
+          <div className="space-y-3 text-gray-600">
+            <p>
+              A mom and the founder of <span className="italic">Fruit and Seeds</span>, bringing passion for desserts to life in a wholesome, mindful way that promotes healthy living.
             </p>
-          </motion.div>
+            <p>
+              My journey began in a small kitchen, transforming natural ingredients into delightful treats — free from refined sugar, gluten, and preservatives.
+            </p>
+            <p>
+              <span className="italic">Fruit and Seeds</span> is more than a shop; it's a mission rooted in environmental awareness with ingredients thoughtfully sourced from local farmers.
+            </p>
+            <p>
+              Behind every dessert is a story and a heartfelt intention to make a positive impact in someone's day.
+            </p>
+          </div>
           
-          {/* Activity 3 */}
-          <motion.div 
-            className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-          >
-            <div className="text-[#97BE5A] text-4xl mb-4">🌱</div>
-            <h3 className="text-xl font-semibold mb-3">Sustainability</h3>
-            <p className="text-gray-600">
-              Environmental responsibility is at the core of all our business activities and decisions.
-            </p>
-          </motion.div>
-        </div>
-      </section>
+          {/* <button className="mt-6 inline-flex items-center text-pink-500 font-medium hover:text-pink-600 transition-colors">
+            READ MORE ABOUT ME <span className="ml-2">→</span>
+          </button> */}
+        </motion.div>
+        
+        {/* Right side - Image with simple frame */}
+        <motion.div 
+          className="md:w-1/2"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <div className="border-8 border-gray-100 rounded-lg shadow-md overflow-hidden">
+            <img 
+              src={aboutuspage}
+              alt="Baker decorating a cake" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </motion.div>
+      </div>
+    </section>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaBox, FaUsers, FaShoppingCart, FaTags, FaChartBar, FaSignOutAlt } from "react-icons/fa";
+import { FaBox, FaUsers, FaShoppingCart, FaTags, FaChartBar, FaSignOutAlt, FaEnvelope } from "react-icons/fa";
 import axios from "axios";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -15,6 +15,7 @@ const Sidebar = () => {
     { name: "Users", label: "Manage Users", icon: FaUsers, path: "/admin/users" },
     { name: "Orders", label: "Manage Orders", icon: FaShoppingCart, path: "/admin/orders" },
     { name: "Categories", label: "Manage Categories", icon: FaTags, path: "/admin/categories" },
+    { name: "Contact", label: "Manage Contact message", icon: FaEnvelope, path: "/admin/contact" },
   ];
 
   const handleLogout = async () => {
@@ -30,8 +31,11 @@ const Sidebar = () => {
     }
   };
 
-  return (
-    <div className="w-64 h-screen bg-[#FDFAF6] text-gray-800 flex flex-col p-4 shadow-md" dir="ltr">
+  return ( 
+    <div 
+  className="w-64 h-screen overflow-hidden bg-[#FDFAF6] text-gray-800 flex flex-col p-4 shadow-md fixed top-0 left-0"
+  dir="ltr"
+>
       <div className="mb-6 flex flex-col items-center border-b border-[#97BE5A] pb-4">
         <span className="text-2xl font-bold text-[#97BE5A]">Fruit & Seeds</span>
       </div>

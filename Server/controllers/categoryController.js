@@ -28,4 +28,34 @@ const getCategories = async (req, res) => {
   }
 };
 
-module.exports = { createCategory, getCategories };
+const deleteCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await Category.destroy({ where: { id } });
+    res.json({ message: "Category deleted" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete category" });
+  }
+};
+
+// تحديث قسم
+const updateCategory = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+
+    const category = await Category.findByPk(id);
+    if (!category) return res.status(404).json({ error: "Category not found" });
+
+    category.name = name || category.name;
+    await category.save();
+
+    res.json(category);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update category" });
+  }
+};
+
+
+
+module.exports = { createCategory, getCategories,updateCategory,deleteCategory };

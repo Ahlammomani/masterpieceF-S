@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import heroBg from '../assets/contactus.jpeg';
 import { FaMapMarkerAlt, FaClock, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
+import Swal from 'sweetalert2';
+
 
 const ContactUs = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setformData] = useState({
     name: '',
     email: '',
     message: ''
@@ -13,6 +15,7 @@ const ContactUs = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState('');
+   const [loading, setLoading] = useState(false);
 
   // الألوان المعدلة
   const colors = {
@@ -27,31 +30,38 @@ const ContactUs = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setformData(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleSubmit = async (e) => {
+ const handlesubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    
+    setLoading(true);
+  
+    console.log("Form Data being sent:", formData);
+  
     try {
-      const response = await axios.post('https://your-api-endpoint.com/contact', formData);
-      
-      if(response.data.success) {
-        setSubmitMessage('Your message has been sent successfully! We will contact you soon.');
-        setFormData({
-          name: '',
-          email: '',
-          message: ''
-        });
-      }
+      await axios.post("http://localhost:5000/api/message", formData);
+      Swal.fire({
+        title: "Sent Successfully!",
+        text: 'We will contact you soon',
+        icon: "success",
+        confirmButtonColor: "#97BE5A",
+      });
+  
+      setformData({ name: "", email: "",  message: "" });
     } catch (error) {
-      setSubmitMessage('An error occurred while sending the message. Please try again.');
+      console.error("Error response:", error.response?.data || error.message);
+      Swal.fire({
+        title: "خطأ",
+        text: "فشل في إرسال الرسالة، يرجى المحاولة مرة أخرى",
+        icon: "error",
+        confirmButtonColor: "#115173",
+      });
     } finally {
-      setIsSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -244,7 +254,7 @@ const ContactUs = () => {
               )}
 
               <motion.form 
-                onSubmit={handleSubmit} 
+                onSubmit={handlesubmit} 
                 className="space-y-6"
                 variants={containerVariants}
               >
