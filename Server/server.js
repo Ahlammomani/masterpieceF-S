@@ -17,6 +17,7 @@ const Cart = require('./routes/cartRoutes');
 const Order=require('./routes/orderRoutes');
 const Reviews=require('./routes/reviewRoutes');
 const Contact = require('./routes/contactRoutes');
+const payment = require('./routes/paymentRoutes');
 
 
 
@@ -51,7 +52,7 @@ app.use('/api/cart', Cart);
 app.use('/api/orders',Order);
 app.use('/api',Reviews);
 app.use('/api',Contact);
-
+app.use('/api/payments', payment);
 // not found
 app.use((req, res, next) => {
   res.status(404).json({ message: "404 - Page Not Found" });

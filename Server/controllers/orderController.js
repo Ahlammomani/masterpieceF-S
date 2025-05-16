@@ -54,41 +54,51 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-exports.processPayment = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const { paymentMethod, address } = req.body;
+// exports.processPayment = async (req, res) => {
+//   try {
+//     // Validate order ID
+//     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+//       return res.status(400).json({ message: 'Invalid order ID' });
+//     }
 
-    const order = await Order.findByPk(orderId, {
-      include: [OrderItem]
-    });
+//     const order = await Order.findById(req.params.id);
+//     if (!order) {
+//       return res.status(404).json({ message: 'Order not found' });
+//     }
 
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
-    }
+//     // Validate payment method
+//     if (!['cash', 'card'].includes(req.body.paymentMethod)) {
+//       return res.status(400).json({ message: 'Invalid payment method' });
+//     }
 
-    if (order.userId !== req.user.id) {
-      return res.status(403).json({ message: 'Not authorized' });
-    }
+//     // Validate address
+//     if (!req.body.address || typeof req.body.address !== 'object') {
+//       return res.status(400).json({ message: 'Invalid delivery address' });
+//     }
 
-    // Update order status
-    order.status = paymentMethod === 'cash' ? 'processing' : 'paid';
-    order.transactionId = `txn_${Date.now()}`;
-    await order.save();
+//     // Update order
+//     order.paymentMethod = req.body.paymentMethod;
+//     order.paymentStatus = req.body.paymentMethod === 'cash' ? 'pending' : 'paid';
+//     order.address = req.body.address;
+//     order.status = 'processing';
 
-    // In a real app, you would integrate with a payment gateway here
-    // For cash on delivery, you might just update the status
-    // For card payments, you would process the payment first
+//     const updatedOrder = await order.save();
 
-    res.json({
-      message: 'Payment processed successfully',
-      order
-    });
-  } catch (error) {
-    console.error('Payment processing error:', error);
-    res.status(500).json({ message: 'Payment processing failed' });
-  }
-};
+//     res.status(200).json({
+//       success: true,
+//       orderId: updatedOrder._id,
+//       message: 'Payment processed successfully'
+//     });
+
+//   } catch (error) {
+//     console.error('Payment processing error:', error);
+//     res.status(500).json({ 
+//       success: false,
+//       message: 'Payment processing failed',
+//       error: error.message 
+//     });
+//   }
+// };
 exports.getOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -124,3 +134,47 @@ exports.getOrder = async (req, res) => {
   }
 };
 
+// Add this to your orderController.js
+exports.getAllOrders = async (req, res) => {
+  try {
+    const { search, status, page = 1, pageSize = 10 } = req.query;
+    const userId = req.user.id;
+
+    // let whereClause = { userId };
+    
+    if (status && status !== 'all') {
+      whereClause.status = status;
+    }
+
+    if (search) {
+      whereClause[Op.or] = [
+        { id: { [Op.like]: `%${search}%` } },
+        { '$orderItems.product.name$': { [Op.like]: `%${search}%` } }
+      ];
+    }
+
+    const { count, rows } = await Order.findAndCountAll({
+      where: whereClause,
+      include: [
+        {
+          model: OrderItem,
+          include: [Product],
+          required: search ? true : false
+        }
+      ],
+      limit: parseInt(pageSize),
+      offset: (page - 1) * pageSize,
+      order: [['createdAt', 'DESC']]
+    });
+
+    res.json({
+      orders: rows,
+      total: count,
+      page: parseInt(page),
+      pageSize: parseInt(pageSize)
+    });
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    res.status(500).json({ message: 'Error fetching orders' });
+  }
+};

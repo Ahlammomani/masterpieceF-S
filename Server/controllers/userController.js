@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const { User, Order } = require('../models');
 const { validateRegisterInput, validateLoginInput } = require('../utils/validation');
 
 
@@ -173,5 +173,50 @@ exports.getUsers = async (req, res) => {
   } catch (error) {
     console.error("❌ Error fetching users:", error);
     res.status(500).json({ message: "Failed to fetch users", error: error.message });
+  }
+};
+
+
+// GET /users/profile
+exports.getProfile = async (req, res) => {
+  try {
+    console.log("REQ.USER:", req.user);
+    const user = await User.findByPk(req.user.userId, {
+      attributes: ['id', 'firstName', 'lastName', 'email', 'phoneNumber'],
+      include: [
+        {
+          model: Order,
+          attributes: ['id', 'totalPrice', 'status', 'createdAt']
+        }
+      ]
+    });
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    res.json({ message: 'مرحبًا بك في ملفك الشخصي', user });
+  } catch (err) {
+    console.error('❌ Error fetching profile:', err);
+    res.status(500).json({ message: 'حدث خطأ في الخادم' });
+  }
+};
+
+// PUT /users/profile
+exports.updateProfile = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.userId);
+
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const { phoneNumber, password } = req.body;
+
+    if (phoneNumber) user.phoneNumber = phoneNumber;
+    if (password) user.password = await bcrypt.hash(password, 10);
+
+    await user.save();
+
+    res.json({ message: 'تم تحديث البيانات بنجاح' });
+  } catch (err) {
+    console.error('❌ Error updating profile:', err);
+    res.status(500).json({ message: 'حدث خطأ أثناء التحديث' });
   }
 };
