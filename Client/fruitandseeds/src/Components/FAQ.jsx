@@ -1,74 +1,116 @@
-import React, { useState } from 'react';
 
-const FAQ = () => {
-  const [activeIndex, setActiveIndex] = useState(null);
+import { useState } from 'react';
 
-  const toggleFAQ = (index) => {
-    setActiveIndex(activeIndex === index ? null : index);
+export default function FAQ() {
+  const [activePopup, setActivePopup] = useState(null);
+  
+  // Colors from the request
+  const colors = {
+    green: "#99BC85",
+    lightGreen: "#97BE5A",
+    pink: "#FF8BA7",
+    cream: "#FDFAF6"
   };
 
-  // Using direct image URLs from the web
+  // FAQ data
   const faqItems = [
     {
-      question: "How can I create a new account?",
-      answer: "You can create a new account by going to the registration page and filling out the required information.",
-      image: "https://i.pinimg.com/736x/a0/ba/29/a0ba294c6671a48c3dd8abf7fb81077f.jpg"
+      question: "Do I need to choose a delivery date?",
+      answer: "Yes, it’s important to select a delivery date when placing your order to confirm your reservation.",
+      color: colors.green
     },
     {
-      question: "What payment methods are available?",
-      answer: "We accept payments via credit cards, PayPal, and cash on delivery.",
-      image: "https://i.pinimg.com/736x/9d/96/ec/9d96ec19171723697179c4b2d086ecdc.jpg"
+      question: "Do I need to select the product I want?",
+      answer: "Absolutely! Please make sure to choose the product or box you’d like before proceeding.",
+      color: colors.pink
     },
     {
-      question: "How can I return a product?",
-      answer: "You can return the product within 14 days of receipt by contacting customer service.",
-      image: "https://i.pinimg.com/736x/32/63/6d/32636de783d184f1ebe14e5f2b249f54.jpg"
+      question: "When should I place my order?",
+      answer: "Kindly place your order at least two days before the delivery date to ensure everything is ready on time.",
+      color: colors.lightGreen
     }
   ];
 
-  // Color scheme from the requirements
-  const colors = {
-    primary: "#97BE5A",
-    secondary: "#99BC85",
-    background: "#FDFAF6",
-    accent: "#FF8BA7"
+  // Open a popup
+  const openPopup = (index) => {
+    setActivePopup(index);
+    // Add body class to prevent scrolling when popup is open
+    document.body.style.overflow = 'hidden';
+  };
+
+  // Close the popup
+  const closePopup = () => {
+    setActivePopup(null);
+    // Remove body class to re-enable scrolling
+    document.body.style.overflow = 'auto';
   };
 
   return (
-    <div className="w-full bg-[#FDFAF6] p-8 rounded-lg shadow-md">
-      <h2 className="text-3xl font-bold text-center mb-10 text-[#97BE5A]">Frequently Asked Questions</h2>
-      
-      <div className="flex flex-wrap justify-center gap-6">
-        {faqItems.map((item, index) => (
-          <div key={index} className="w-full md:w-64 mb-6">
-            <button
-              onClick={() => toggleFAQ(index)}
-              className={`w-full p-4 text-left rounded-t-lg font-medium transition-all duration-300 ${
-                activeIndex === index 
-                  ? "bg-[#97BE5A] text-white" 
-                  : "bg-[#99BC85] text-white hover:bg-opacity-90"
-              }`}
+    <div className="w-full h-100 bg-cream p-4">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-4xl font-bold text-center mb-12" style={{ color: colors.lightGreen }}>
+          How to Order from Us – Simple & Easy Steps
+        </h2>
+        
+        {/* FAQ Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {faqItems.map((item, index) => (
+            <div 
+              key={index}
+              className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-105"
+              onClick={() => openPopup(index)}
             >
-              {item.question}
-            </button>
-
-            {activeIndex === index && (
-              <div className="relative">
-                <img 
-                  src={item.image} 
-                  alt="FAQ illustration" 
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-                  <p className="text-white text-center">{item.answer}</p>
-                </div>
+              <div 
+                className="h-40 flex items-center justify-center p-6"
+                style={{ backgroundColor: item.color }}
+              >
+                <h3 className="text-xl font-medium text-white text-center">{item.question}</h3>
               </div>
-            )}
-          </div>
-        ))}
+
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* Popup Modal */}
+      {activePopup !== null && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          {/* Overlay */}
+          <div 
+            className="absolute inset-0 bg-green bg-opacity-50"
+            onClick={closePopup}
+          ></div>
+          
+          {/* Modal Content - circular shape with dynamic background color */}
+          <div 
+            className="relative rounded-full shadow-xl overflow-hidden flex items-center justify-center  " 
+            
+            style={{ 
+              width: '500px', 
+              height: '500px',
+              backgroundColor: faqItems[activePopup].color
+            }}
+          >
+            <div className="w-4/5 p-6 flex flex-col items-center text-center">
+              <h3 className="text-2xl font-bold mb-6 text-white">
+                {faqItems[activePopup].question}
+              </h3>
+              <p className="text-white text-lg mb-8">
+                {faqItems[activePopup].answer}
+              </p>
+              <div>
+                <button 
+                  className="px-6 py-2 rounded-full bg-white font-medium"
+                  style={{ color: faqItems[activePopup].color }}
+                  onClick={closePopup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
-};
-
-export default FAQ;
+}

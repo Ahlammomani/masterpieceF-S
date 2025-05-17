@@ -1,77 +1,75 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import heroImage from "../assets/hero-image.jpeg";
+import { useState } from 'react';
+import heroimage from '../assets/hero-image.jpeg';
 
-const Hero = () => {
+export default function Hero() {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Colors from the request
+  const colors = {
+    green: "#99BC85",
+    lightGreen: "#97BE5A",
+    pink: "#FF8BA7",
+    // cream: "#FDFAF6"
+  };
+
   return (
-    <div className="relative w-full overflow-hidden">
-      {/* Main Hero Container */}
-      <motion.div 
-        className="relative h-screen min-h-[600px] max-h-[800px]"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1 }}
-      >
-        {/* Background Image with Darker Overlay */}
-        <div className="absolute inset-0">
-          <img
-            src={heroImage}
-            alt="Homemade treats"
-            className="w-full h-full object-cover object-center"
-          />
-          <div className="absolute inset-0 "></div>
-        </div>
-
-        {/* Content */}
-        <div className="relative h-full flex flex-col items-center justify-center text-center px-6">
-          <motion.div
-            className="max-w-4xl mx-auto"
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-          >
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
-              <span className="block mb-2">Delicious, Homemade Treats</span>
-              <span className="text-2xl md:text-4xl font-normal">From Our Family to Yours</span>
-            </h1>
-            
-            <motion.p 
-              className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6, duration: 0.8 }}
-            >
-              Crafted with love by a mother-daughter duo using only the finest natural ingredients
-            </motion.p>
-            
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.9, type: 'spring' }}
-            >
-              <button className="px-8 py-3 bg-[#A5B68D] hover:bg-[#8FA07A] text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
-                Order Now
-              </button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Wave Divider - More Pronounced */}
-      {/* <div className="relative w-full h-24 md:h-32 -mt-1">
+    <div className="relative w-full h-screen overflow-hidden bg-white">
+      {/* Curved Background */}
+      <div className="absolute inset-0 z-0" style={{ background: colors.cream }}>
+        {/* Main curved shape - flipped to point downward */}
         <svg 
-          viewBox="0 0 1440 120" 
-          preserveAspectRatio="none" 
-          className="w-full h-full"
+          viewBox="0 0 1440 800" 
+          className="absolute top-0 left-0 w-full h-full"
+          preserveAspectRatio="none"
         >
           <path 
-            fill="white"
-            d="M0,0 C150,95 350,25 500,80 C650,135 850,5 1000,60 C1150,115 1350,45 1440,100 L1440,120 L0,120 Z"
-          ></path>
+            d="M0,0 L0,500 Q720,800 1440,500 L1440,0 Z" 
+            fill={colors.green} 
+          />
+          <path 
+            d="M0,0 L0,400 Q720,600 1440,400 L1440,0 Z" 
+            fill={colors.lightGreen} 
+            fillOpacity="0.6" 
+          />
         </svg>
-      </div> */}
-    </div>
-  )
-}
+      </div>
 
-export default Hero;
+      <div className="relative z-10 flex h-full">
+        {/* Left side - Empty space or could have an image */}
+        <div className="w-1/2 flex items-center justify-center">
+          {/* Hero image in a circular frame */}
+          <div className="w-3/4 aspect-square rounded-full bg-white shadow-xl overflow-hidden">
+            <img 
+              src={heroimage} 
+              alt="Delicious homemade treats" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        {/* Right side - Text and CTA */}
+        <div className="w-1/2 flex flex-col justify-center px-12">
+          <h1 className="text-5xl font-bold text-white mb-6">
+            Delicious, Homemade Treats
+          </h1>
+          <p className="text-xl text-white mb-8">
+            From Our Family to Yours. Handcrafted with love and the finest ingredients
+            for moments that matter.
+          </p>
+          
+          {/* Call to Action Button */}
+          <div>
+            <button 
+              className={`px-8 py-3 rounded-full text-white font-medium transition-all duration-300 ${isHovered ? 'shadow-lg transform -translate-y-1' : 'shadow'}`}
+              style={{ backgroundColor: isHovered ? colors.pink : colors.green }}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              Order Now
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

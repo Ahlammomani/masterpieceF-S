@@ -138,9 +138,9 @@ exports.getOrder = async (req, res) => {
 exports.getAllOrders = async (req, res) => {
   try {
     const { search, status, page = 1, pageSize = 10 } = req.query;
-    const userId = req.user.id;
-
-    // let whereClause = { userId };
+    
+    // Initialize whereClause
+    let whereClause = {};
     
     if (status && status !== 'all') {
       whereClause.status = status;

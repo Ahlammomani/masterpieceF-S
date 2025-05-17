@@ -1,5 +1,5 @@
 const db = require('../models');
-const { Payment, Order, Delivery } = require('../models');
+const { Payment, Order, Delivery, User } = require('../models'); // Make sure User is imported
 
 
 
@@ -100,7 +100,8 @@ const createPayment = async (req, res) => {
   }
 };
 
-// دالة للحصول على تفاصيل الدفع
+
+
 const getPaymentDetails = async (req, res) => {
   try {
     const { paymentId } = req.params;

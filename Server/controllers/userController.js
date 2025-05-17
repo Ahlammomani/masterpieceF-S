@@ -220,3 +220,13 @@ exports.updateProfile = async (req, res) => {
     res.status(500).json({ message: 'حدث خطأ أثناء التحديث' });
   }
 };
+
+exports.getallusers = async (req, res) => {
+  try {
+    const users = await users.findAll();
+    res.json(users);
+  } catch (error) {
+    console.error('خطأ أثناء جلب روابط المنتجات والفئات:', error);
+    res.status(500).json({ error: "حدث خطأ أثناء جلب روابط المنتجات والفئات" });
+  }
+};

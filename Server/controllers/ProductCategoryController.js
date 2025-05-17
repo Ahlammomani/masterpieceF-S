@@ -31,4 +31,20 @@ const getProductCategories = async (req, res) => {
   }
 };
 
-module.exports = { createProductCategory, getProductCategories };
+
+const getProductsByCategory = async (req, res) => {
+  try {
+    const { category } = req.query;
+    const products = await Product.findAll({
+      where: { categoryId: category },
+      include: [ProductCategory] // If you need category info
+    });
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    res.status(500).json({ error: "Error fetching products" });
+  }
+};
+
+
+module.exports = { createProductCategory, getProductCategories ,getProductsByCategory};

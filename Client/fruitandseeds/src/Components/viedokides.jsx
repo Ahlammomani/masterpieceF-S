@@ -1,51 +1,82 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import back from '../assets/back.png';
 
-const KidsRecipeVideo = () => {
-  const [videoStarted, setVideoStarted] = useState(false);
-
-  const startVideo = () => {
-    setVideoStarted(true);
-  };
+export default function VideoLesson() {
+  const [videoActivated, setVideoActivated] = useState(false);
+  const videoId = "OaliHe5nKo0";
 
   return (
-    <div className="flex justify-center items-center min-h-[50vh] p-4">
-      <motion.div
-        className="relative rounded-3xl overflow-hidden shadow-2xl w-full max-w-4xl"
-        initial={{ opacity: 0, scale: 0.95 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.6, duration: 0.8 }}
-        viewport={{ once: true }}
-      >
-        {!videoStarted && (
-          <div className="absolute inset-0 bg-white/10 backdrop-blur-sm z-10 flex items-center justify-center">
-            <motion.button
-              className="w-20 h-20 rounded-full bg-white/90 flex items-center justify-center cursor-pointer shadow-lg focus:outline-none"
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={startVideo}
-              aria-label="Play video"
-            >
-              <svg className="w-10 h-10 text-[#97BE5A]" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M6.3 2.841A1.5 1.5 0 004 4.11v11.78a1.5 1.5 0 002.3 1.269l9.344-5.89a1.5 1.5 0 000-2.538L6.3 2.84z"></path>
-              </svg>
-            </motion.button>
-          </div>
-        )}
+    <div className="w-full min-h-screen bg-white flex flex-col items-center justify-center p-8 relative overflow-hidden">
+      {/* 3D Background Pattern */}
+      <div className="absolute inset-0 overflow-hidden z-0">
+        <div className="absolute -top-20 -left-10 w-64 h-64 opacity-20">
+          <img src={back} alt="background pattern" className="w-full h-full object-contain rotate-45" />
+        </div>
+        <div className="absolute -bottom-20 -right-10 w-64 h-64 opacity-20">
+          <img src={back} alt="background pattern" className="w-full h-full object-contain -rotate-45" />
+        </div>
+        <div className="absolute top-1/4 -right-10 w-48 h-48 opacity-15">
+          <img src={back} alt="background pattern" className="w-full h-full object-contain rotate-12" />
+        </div>
+        <div className="absolute bottom-1/4 -left-10 w-48 h-48 opacity-15">
+          <img src={back} alt="background pattern" className="w-full h-full object-contain -rotate-12" />
+        </div>
+        <div className="absolute top-0 right-1/5 w-42 h-42 opacity-10">
+          <img src={back} alt="background pattern" className="w-full h-full object-contain rotate-30" />
+        </div>
+        <div className="absolute bottom-0 left-1/4 w-32 h-32 opacity-10">
+          <img src={back} alt="background pattern" className="w-full h-full object-contain -rotate-30" />
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="w-full max-w-4xl relative z-10">
+        {/* Top Text Section */}
+        <div className="text-center mb-8">
+          <h2 className="text-5xl text-[#FF8BA7] font-bold mb-2">Quick & Healthy Desserts for Kids</h2>
+          <p className="text-3xl text-[#FF8BA7] italic">Tastes They'll Love, and Moms Can Trust!</p>
+        </div>
         
-        <iframe 
-          className="w-full aspect-video"
-          src={videoStarted 
-            ? "https://www.youtube.com/embed/OaliHe5nKo0?autoplay=1&mute=1" 
-            : "https://www.youtube.com/embed/OaliHe5nKo0"
-          }
-          title="Quick & Easy Kids Recipe"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
-      </motion.div>
+        {/* Video Card Container */}
+        <div className="relative rounded-lg overflow-hidden shadow-lg bg-white/80 backdrop-blur-sm border border-white/20">
+          {/* Video Player */}
+          <div className="relative aspect-video">
+            {!videoActivated ? (
+              <>
+                {/* Thumbnail with play overlay */}
+                <img 
+                  src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`} 
+                  alt="Video thumbnail" 
+                  className="w-full h-full object-cover"
+                />
+                
+                {/* Play button overlay */}
+                <div 
+                  className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                  onClick={() => setVideoActivated(true)}
+                >
+                  <div className="w-16 h-16 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
+                      <svg className="w-6 h-6 text-black" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 5v14l11-7z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <iframe
+                className="absolute inset-0 w-full h-full"
+                src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default KidsRecipeVideo;
+}

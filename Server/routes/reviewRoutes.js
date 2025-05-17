@@ -7,7 +7,7 @@ const {authMiddleware}=require('../Middleware/authMiddleware')
 router.post('/products/:productId/reviews',authMiddleware ,createReview);
 
 
- router.get('/products/:productId/reviews', getReviews);
+ router.get('/products/:productId/reviews',getReviews);
 
 
 // router.delete('/reviews/:reviewId', deleteReview);
