@@ -48,7 +48,7 @@ const ContactUs = () => {
         title: "Sent Successfully!",
         text: 'We will contact you soon',
         icon: "success",
-        confirmButtonColor: "#97BE5A",
+        confirmButtonColor: "#115173",
       });
   
       setformData({ name: "", email: "",  message: "" });

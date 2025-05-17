@@ -1,40 +1,76 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  // جلب محتويات الكارت عند تحميل الصفحة
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      try {
-        const response = await fetch('/api/cart', {
-          credentials: 'include' // إرسال الكوكيز
-        });
+  const fetchCartItems = async () => {
+    try {
+      const response = await fetch('/api/cart', {
+        credentials: 'include'
+      });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'Failed to fetch cart items');
-        }
-
-        setCartItems(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+      // إذا كان الرد غير ناجح (مثل 404)
+      if (response.status === 404) {
+        navigate('/not-found');
+        return;
       }
-    };
 
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Invalid response format');
+      }
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch cart items');
+      }
+
+      setCartItems(data);
+      setError(null);
+    } catch (err) {
+      console.error('Fetch error:', err);
+      
+      // للردود غير الناجحة (500, 404, إلخ)
+      if (err.message.includes('404')) {
+        navigate('/not-found');
+      } else {
+        setError(err.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchCartItems();
   }, []);
 
-  // تحديث كمية منتج في الكارت
+  // دالة مساعدة للتعامل مع الاستجابات
+  const handleResponse = async (response) => {
+    const contentType = response.headers.get('content-type');
+    
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Server returned non-JSON response');
+    }
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error || 'Request failed');
+    }
+
+    return data;
+  };
+
   const updateQuantity = async (cartItemId, newQuantity) => {
     try {
-      const response = await fetch(`/api/cart/update/${cartItemId}`, {
+      const response = await fetch(`http://localhost:5000/api/cart/update/${cartItemId}`, {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -43,12 +79,8 @@ const Cart = () => {
         body: JSON.stringify({ quantity: newQuantity })
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to update quantity');
-      }
-
+      await handleResponse(response);
+      
       setCartItems(cartItems.map(item =>
         item.id === cartItemId ? { ...item, quantity: newQuantity } : item
       ));
@@ -58,19 +90,14 @@ const Cart = () => {
     }
   };
 
-  // حذف منتج من الكارت
   const removeItem = async (cartItemId) => {
     try {
-      const response = await fetch(`/api/cart/remove/${cartItemId}`, {
+      const response = await fetch(`http://localhost:5000/api/cart/remove/${cartItemId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to remove item');
-      }
+      await handleResponse(response);
 
       setCartItems(cartItems.filter(item => item.id !== cartItemId));
     } catch (err) {
@@ -79,7 +106,6 @@ const Cart = () => {
     }
   };
 
-  // حساب المجموع الكلي
   const calculateTotal = () => {
     return cartItems.reduce(
       (total, item) => total + (item.Product.price * item.quantity),
@@ -87,8 +113,28 @@ const Cart = () => {
     ).toFixed(2);
   };
 
-  if (loading) return <div className="text-center py-10">Loading...</div>;
-  if (error) return <div className="text-center py-10 text-red-500">Error: {error}</div>;
+   if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-[#FF8BA7]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen bg-black text-white p-4">
+        <h2 className="text-3xl font-bold text-red-600 mb-4">Error Occurred</h2>
+        <p className="text-xl mb-6 text-gray-300">{error}</p>
+        <button
+          onClick={fetchCartItems}
+          className="px-6 py-3 bg-red-600 text-white font-semibold rounded-full hover:bg-red-700 transition"
+        >
+          Try Again
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

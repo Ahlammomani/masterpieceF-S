@@ -8,6 +8,7 @@ import 'leaflet/dist/leaflet.css';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import Swal from 'sweetalert2';
 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -84,68 +85,126 @@ const CheckoutPage = () => {
     fetchOrder();
   }, [orderId, cookies.token, cookies.userId, navigate]);
 
-  const handlePayment = async (paypalOrderId = null) => {
-    if (!position) {
-      alert('Please select your delivery location on the map.');
-      return;
-    }
 
-    setProcessing(true);
-    try {
-      const response = await fetch(`http://localhost:5000/api/payments/${orderId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${cookies.token}`
+
+const handlePayment = async (paypalOrderId = null) => {
+  if (!position) {
+    await Swal.fire({
+      icon: 'warning',
+      title: 'Location Required',
+      text: 'Please select your delivery location on the map.',
+      confirmButtonColor: '#3085d6',
+    });
+    return;
+  }
+
+  setProcessing(true);
+  
+  // عرض رسالة "جاري المعالجة"
+  Swal.fire({
+    title: 'Processing',
+    html: 'Your order is being processed...',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
+
+  try {
+    const response = await fetch(`http://localhost:5000/api/payments/${orderId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${cookies.token}`
+      },
+      body: JSON.stringify({
+        paymentMethod,
+        address: {
+          lat: position.lat,
+          lng: position.lng,
+          formatted: `Lat: ${position.lat.toFixed(5)}, Lng: ${position.lng.toFixed(5)}`
         },
-        body: JSON.stringify({
-          paymentMethod,
-          address: position,
-          amount: order.totalPrice,
-          currency: 'USD',
-          paypalOrderId,
-          userId: cookies.userId
-        })
-      });
+        amount: order.totalPrice,
+        currency: 'USD',
+        paypalOrderId,
+        userId: cookies.userId
+      })
+    });
 
-      const result = await response.json();
+    const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(result.message || 'Payment failed');
-      }
-
-      navigate('/order-confirmation', { 
-        state: { 
-          orderId: result.orderId || orderId,
-          paymentMethod
-        }
-      });
-    } catch (error) {
-      console.error('Payment error:', error);
-      alert(error.message || 'Payment processing failed');
-    } finally {
-      setProcessing(false);
+    if (!response.ok) {
+      throw new Error(data.message || 'Payment failed');
     }
-  };
+
+    // إغلاق رسالة "جاري المعالجة"
+    Swal.close();
+    
+    // عرض رسالة النجاح
+    await Swal.fire({
+      icon: 'success',
+      title: 'Payment Successful!',
+      html: `
+        <div style="text-align: left; margin-top: 20px;">
+          <p><strong>Order ID:</strong> ${data.data.orderId}</p>
+          <p><strong>Payment ID:</strong> ${data.data.paymentId}</p>
+        </div>
+      `,
+      confirmButtonText: 'View Order',
+      confirmButtonColor: '#3085d6',
+      showCancelButton: true,
+      cancelButtonText: 'Continue Shopping'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `/order-confirmation/${data.data.orderId}`;
+      }
+    });
+
+  } catch (error) {
+    console.error('Payment error:', error);
+    
+    // إغلاق رسالة "جاري المعالجة"
+    Swal.close();
+    
+    // عرض رسالة الخطأ
+    let errorTitle = 'Payment Failed';
+    let errorMessage = error.message;
+    
+    if (error.message.includes('Internal server error')) {
+      errorTitle = 'Server Error';
+      errorMessage = 'An unexpected error occurred. Please try again later.';
+    }
+    
+    await Swal.fire({
+      icon: 'error',
+      title: errorTitle,
+      text: errorMessage,
+      confirmButtonColor: '#d33',
+    });
+    
+  } finally {
+    setProcessing(false);
+  }
+};
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen bg-white flex items-center justify-center">Loading...</div>;
   }
 
   if (!order) {
-    return <div className="min-h-screen flex items-center justify-center">Order not found</div>;
+    return <div className="min-h-screen bg-white flex items-center justify-center">Order not found</div>;
   }
 
   return (
     <PayPalScriptProvider options={{ 
-      "client-id": "AVYvR10qmkdmsF_YA9LW6FaMXeCo-nBhAtazvDTAiktMQ4vPytPqdfJrh5rbhidqG13h34ycUvKoY0Z",
+      "client-id": "AVYvR10qmkdmsF_YA9LW6FaMXeCo-nBhAtazvDTAiktMQ4vPytPqdfJrh5rbh_IDqG13h34ycUvKoY0Z",
       currency: "USD"
     }}>
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-3xl font-bold text-[#99BC85] mb-8">Checkout</h1>
 
-          <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden border border-gray-200">
             {/* Order Summary Section */}
             <div className="p-6 border-b border-gray-200">
               <h2 className="text-xl font-semibold text-gray-800">Order Summary</h2>
@@ -172,7 +231,7 @@ const CheckoutPage = () => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Address</label>
-                  <div className="w-full h-64 mb-4">
+                  <div className="w-full h-64 mb-4 border border-gray-300 rounded-md overflow-hidden">
                     <MapContainer 
                       center={[31.963158, 35.930359]} 
                       zoom={8} 
@@ -261,7 +320,7 @@ const CheckoutPage = () => {
                 <button
                   onClick={() => handlePayment()}
                   disabled={processing}
-                  className={`mt-8 w-full bg-gradient-to-r from-[#FF8BA7] to-[#FF6B6B] text-white py-3 px-6 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all duration-300 ${processing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`mt-8 w-full bg-gradient-to-r from-[#FF8BA7] to-[#FF6B6B] text-white py-3 px-6 rounded-lg font-bold text-lg shadow hover:shadow-md transition-all duration-300 ${processing ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {processing ? 'Processing...' : 'Complete Payment'}
                 </button>

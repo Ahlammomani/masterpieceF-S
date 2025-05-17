@@ -6,8 +6,8 @@ import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import Menu from "./pages/Menu";
 import ContactUs from "./pages/ContactUs";
- import Details from "./pages/Details";
-import Cart from "./pages/Cart";
+import Details from "./pages/Details";
+// import Cart from "./pages/Cart";
 import Navbar from "./Components/Navbar";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin/Dashboard";
@@ -59,7 +59,7 @@ function App() {
         <Route path="/Admin/*" element={<Admin />} />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
         <Route path="/Details/:productId" element={<Details />} />
-        <Route path="/cart" element={<Cart />} />
+        {/* <Route path="/cart" element={<Cart />} /> */}
         <Route path="*" element={<NotFound />} />
       </Routes>
       </Suspense>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Select, Input, Tag, Space, Card, Divider } from 'antd';
-import { SearchOutlined, FilterOutlined } from '@ant-design/icons';
+import { Table, Button, Select, Input, Tag, Space, Card, Divider, Badge } from 'antd';
+import { SearchOutlined, FilterOutlined, SyncOutlined, EyeOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
 const { Option } = Select;
@@ -20,6 +20,12 @@ const Orders = () => {
     processing: '#97BE5A',
     completed: '#99BC85',
     cancelled: '#ff4d4f',
+  };
+
+  const paymentColors = {
+    card: '#99BC85',
+    cash: '#97BE5A',
+    paypal: '#003087',
   };
 
   const fetchOrders = async () => {
@@ -54,45 +60,80 @@ const Orders = () => {
       title: 'Order ID',
       dataIndex: 'id',
       key: 'id',
-      render: (id) => `#${id}`,
+      render: (id) => <span className="font-semibold">#{id}</span>,
+      width: 120,
     },
     {
       title: 'Date',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (date) => new Date(date).toLocaleDateString(),
+      render: (date) => (
+        <div className="text-sm">
+          <div>{new Date(date).toLocaleDateString()}</div>
+          <div className="text-gray-500">{new Date(date).toLocaleTimeString()}</div>
+        </div>
+      ),
+      width: 150,
     },
     {
       title: 'Items',
       dataIndex: 'orderItems',
       key: 'items',
-      render: (items) => items.length,
+      render: (items) => (
+        <Badge 
+          count={items.length} 
+          style={{ backgroundColor: '#FF8BA7' }}
+          className="font-semibold"
+        />
+      ),
+      width: 100,
     },
     {
       title: 'Total',
       dataIndex: 'totalPrice',
       key: 'total',
-      render: (price) => `$${price.toFixed(2)}`,
+      render: (price) => <span className="font-semibold">${price.toFixed(2)}</span>,
+      width: 120,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
       render: (status) => (
-        <Tag color={statusColors[status] || '#d9d9d9'}>
-          {status.toUpperCase()}
+        <Tag 
+          color={statusColors[status] || '#d9d9d9'}
+          style={{
+            padding: '0 8px',
+            borderRadius: '12px',
+            fontWeight: 500,
+            textTransform: 'uppercase',
+            fontSize: '12px',
+          }}
+        >
+          {status}
         </Tag>
       ),
+      width: 150,
     },
     {
       title: 'Payment',
       dataIndex: 'paymentMethod',
       key: 'payment',
       render: (method) => (
-        <Tag color={method === 'card' ? '#99BC85' : '#97BE5A'}>
-          {method.toUpperCase()}
+        <Tag 
+          color={paymentColors[method.toLowerCase()] || '#d9d9d9'}
+          style={{
+            padding: '0 8px',
+            borderRadius: '12px',
+            fontWeight: 500,
+            textTransform: 'uppercase',
+            fontSize: '12px',
+          }}
+        >
+          {method}
         </Tag>
       ),
+      width: 150,
     },
     {
       title: 'Actions',
@@ -100,13 +141,21 @@ const Orders = () => {
       render: (_, record) => (
         <Space size="middle">
           <Button 
-            style={{ backgroundColor: '#99BC85', color: '#FDFAF6' }}
+            icon={<EyeOutlined />}
+            className="flex items-center"
+            style={{ 
+              backgroundColor: '#99BC85', 
+              color: '#FDFAF6',
+              borderRadius: '6px',
+              fontWeight: 500,
+            }}
             onClick={() => viewOrderDetails(record)}
           >
-            View
+            Details
           </Button>
         </Space>
       ),
+      width: 120,
     },
   ];
 
@@ -121,14 +170,33 @@ const Orders = () => {
         title: 'Product',
         dataIndex: ['product', 'name'],
         key: 'product',
+        render: (_, record) => (
+          <div className="flex items-center">
+            {record.product?.image && (
+              <img 
+                src={record.product.image} 
+                alt={record.product.name}
+                className="w-10 h-10 object-cover rounded mr-3"
+              />
+            )}
+            <span>{record.product?.name}</span>
+          </div>
+        ),
       },
       {
         title: 'Quantity',
         dataIndex: 'quantity',
         key: 'quantity',
+        render: (quantity) => (
+          <Badge 
+            count={quantity} 
+            style={{ backgroundColor: '#97BE5A' }}
+            className="font-semibold"
+          />
+        ),
       },
       {
-        title: 'Price',
+        title: 'Unit Price',
         dataIndex: 'price',
         key: 'price',
         render: (price) => `$${price.toFixed(2)}`,
@@ -136,7 +204,9 @@ const Orders = () => {
       {
         title: 'Subtotal',
         key: 'subtotal',
-        render: (_, record) => `$${(record.price * record.quantity).toFixed(2)}`,
+        render: (_, record) => (
+          <span className="font-semibold">${(record.price * record.quantity).toFixed(2)}</span>
+        ),
       },
     ];
 
@@ -147,62 +217,87 @@ const Orders = () => {
         pagination={false}
         size="small"
         style={{ backgroundColor: '#FDFAF6' }}
+        rowKey={(record) => record.product?.id || record.id}
       />
     );
   };
 
   return (
-    <div style={{ padding: '20px', backgroundColor: '#FDFAF6', minHeight: '100vh' }}>
+    <div className="p-6 bg-[#FDFAF6] min-h-screen">
       <Card
-        title="Orders Management"
-        style={{
-          borderRadius: '10px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-          border: 'none',
-        }}
+        title={
+          <div className="flex items-center">
+            <span className="text-xl font-semibold">Orders Management</span>
+            <span className="ml-2 text-sm text-gray-500">
+              {pagination.total} total orders
+            </span>
+          </div>
+        }
+        className="shadow-sm"
         headStyle={{
           backgroundColor: '#99BC85',
           color: '#FDFAF6',
-          borderRadius: '10px 10px 0 0',
+          borderTopLeftRadius: '8px',
+          borderTopRightRadius: '8px',
+          padding: '16px 24px',
+        }}
+        bodyStyle={{
+          padding: '24px',
         }}
       >
-        <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
           <Input
             placeholder="Search orders..."
-            prefix={<SearchOutlined />}
-            style={{ width: 300 }}
+            prefix={<SearchOutlined className="text-gray-400" />}
+            className="max-w-md"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
+            allowClear
           />
-          <Select
-            placeholder="Filter by status"
-            style={{ width: 200 }}
-            suffixIcon={<FilterOutlined />}
-            value={statusFilter}
-            onChange={(value) => setStatusFilter(value)}
-          >
-            <Option value="all">All Statuses</Option>
-            <Option value="pending">Pending</Option>
-            <Option value="processing">Processing</Option>
-            <Option value="completed">Completed</Option>
-            <Option value="cancelled">Cancelled</Option>
-          </Select>
-          <Button
-            style={{ backgroundColor: '#97BE5A', color: '#FDFAF6' }}
-            onClick={fetchOrders}
-          >
-            Refresh
-          </Button>
+          
+          <div className="flex gap-4">
+            <Select
+              placeholder="Filter by status"
+              className="min-w-[180px]"
+              suffixIcon={<FilterOutlined className="text-gray-400" />}
+              value={statusFilter}
+              onChange={(value) => setStatusFilter(value)}
+            >
+              <Option value="all">All Statuses</Option>
+              <Option value="pending">Pending</Option>
+              <Option value="processing">Processing</Option>
+              <Option value="completed">Completed</Option>
+              <Option value="cancelled">Cancelled</Option>
+            </Select>
+            
+            <Button
+              icon={<SyncOutlined />}
+              style={{ 
+                backgroundColor: '#97BE5A', 
+                color: '#FDFAF6',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+              }}
+              onClick={fetchOrders}
+            >
+              Refresh
+            </Button>
+          </div>
         </div>
 
-        <Divider style={{ backgroundColor: '#FF8BA7', margin: '10px 0' }} />
+        <Divider style={{ backgroundColor: '#FF8BA7', margin: '0 0 16px 0' }} />
 
         <Table
           columns={columns}
           dataSource={orders}
           rowKey="id"
           loading={loading}
-          expandable={{ expandedRowRender }}
+          expandable={{ 
+            expandedRowRender,
+            expandIconColumnIndex: -1,
+            expandRowByClick: true,
+          }}
           pagination={{
             ...pagination,
             showSizeChanger: true,
@@ -210,10 +305,27 @@ const Orders = () => {
             onChange: (page, pageSize) => {
               setPagination({ current: page, pageSize });
             },
+            style: { margin: '16px 0 0 0' },
           }}
-          style={{ borderRadius: '8px', overflow: 'hidden' }}
+          scroll={{ x: 'max-content' }}
+          className="custom-antd-table"
         />
       </Card>
+
+      <style jsx global>{`
+        .custom-antd-table .ant-table-thead > tr > th {
+          background-color: #f8f9fa;
+          font-weight: 600;
+          color: #495057;
+        }
+        .custom-antd-table .ant-table-tbody > tr:hover > td {
+          background-color: #f8f9fa !important;
+        }
+        .custom-antd-table .ant-table-expanded-row > td {
+          background-color: #FDFAF6 !important;
+          padding: 16px !important;
+        }
+      `}</style>
     </div>
   );
 };

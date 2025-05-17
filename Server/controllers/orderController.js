@@ -5,7 +5,7 @@ const { Order, OrderItem, Product } = require('../models');
 exports.createOrder = async (req, res) => {
   try {
     const { userId, items, totalPrice, status, paymentMethod } = req.body;
-    console.log('ahlam',userId);
+    console.log('ahlam',items);
 
     // Validate items
     if (!items || items.length === 0) {
