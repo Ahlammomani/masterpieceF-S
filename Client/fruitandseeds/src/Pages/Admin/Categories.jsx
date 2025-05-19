@@ -32,6 +32,20 @@ const Categories = () => {
     }
   };
 
+  const createCategory = async () => {
+  try {
+    const res = await axios.post("http://localhost:5000/api/categories", { 
+      name: editName 
+    });
+    setEditId(null);
+    setEditName("");
+    fetchCategories();
+  } catch (err) {
+    setError("Failed to create category");
+    console.error("Error creating category:", err);
+  }
+};
+
   const updateCategory = async (id) => {
     try {
       await axios.put(`http://localhost:5000/api/categories/${id}`, { name: editName });
@@ -52,59 +66,59 @@ const Categories = () => {
     <div className="p-6 bg-[#FDFAF6] min-h-screen">
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-[#2C5F2D]">Manage Categories</h2>
-          <button 
-            className="bg-[#97BE5A] hover:bg-[#7EA84B] text-white px-4 py-2 rounded-lg shadow transition-colors"
+          <h2 className="text-3xl font-bold text-[#97BE5A]">Manage Categories</h2>
+  <button 
+    className="bg-[#97BE5A] hover:bg-[#7EA84B] text-white px-4 py-2 rounded-lg shadow transition-colors"
+    onClick={() => {
+      setEditId("new");
+      setEditName("");
+    }}
+  >
+    + Add New Category
+  </button>
+</div>
+
+{error && (
+  <div className="bg-[#FF8BA7] text-white p-3 rounded-lg mb-6">
+    {error}
+  </div>
+)}
+
+{isLoading ? (
+  <div className="flex justify-center items-center h-64">
+    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#99BC85]"></div>
+  </div>
+) : (
+  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    {editId === "new" && (
+      <div className="bg-white p-6 rounded-xl shadow-lg border border-[#99BC85]">
+        <input
+          type="text"
+          value={editName}
+          onChange={(e) => setEditName(e.target.value)}
+          placeholder="New category name"
+          className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#97BE5A] focus:border-transparent"
+        />
+        <div className="flex justify-end gap-3">
+          <button
             onClick={() => {
-              setEditId("new");
-              setEditName("");
+              if (editName.trim()) {
+                createCategory(); 
+              }
             }}
+            className="bg-[#97BE5A] hover:bg-[#7EA84B] text-white px-4 py-2 rounded-lg transition-colors"
           >
-            + Add New Category
+            Create
+          </button>
+          <button
+            onClick={() => setEditId(null)}
+            className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition-colors"
+          >
+            Cancel
           </button>
         </div>
-
-        {error && (
-          <div className="bg-[#FF8BA7] text-white p-3 rounded-lg mb-6">
-            {error}
-          </div>
-        )}
-
-        {isLoading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#99BC85]"></div>
-          </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {editId === "new" && (
-              <div className="bg-white p-6 rounded-xl shadow-lg border border-[#99BC85]">
-                <input
-                  type="text"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  placeholder="New category name"
-                  className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#97BE5A] focus:border-transparent"
-                />
-                <div className="flex justify-end gap-3">
-                  <button
-                    onClick={() => {
-                      if (editName.trim()) {
-                        updateCategory("new");
-                      }
-                    }}
-                    className="bg-[#97BE5A] hover:bg-[#7EA84B] text-white px-4 py-2 rounded-lg transition-colors"
-                  >
-                    Create
-                  </button>
-                  <button
-                    onClick={() => setEditId(null)}
-                    className="bg-gray-300 hover:bg-gray-400 px-4 py-2 rounded-lg transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
+      </div>
+       )}
 
             {categories.map((category) => (
               <div

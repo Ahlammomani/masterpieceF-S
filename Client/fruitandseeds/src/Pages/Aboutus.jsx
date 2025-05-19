@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+
 import aboutuspage from '../assets/aboutuspage.jpeg'
+
+
+ 
 
 const CreativeSection = () => {
   const [videoStarted, setVideoStarted] = useState(false);
+  const navigate = useNavigate();
 
  
   const containerVariants = {
@@ -31,6 +37,10 @@ const CreativeSection = () => {
 
   const startVideo = () => {
     setVideoStarted(true);
+  };
+
+   const handleOrderClick = () => {
+    navigate('/menu'); // Navigate to menu page when button is clicked
   };
 
   return (
@@ -92,8 +102,11 @@ const CreativeSection = () => {
             className="flex flex-col sm:flex-row justify-center gap-4"
             variants={itemVariants}
           >
-            <button className="px-8 py-3 bg-[#97BE5A] text-white rounded-full font-medium hover:bg-[#7fa34a] transition-colors shadow-lg hover:shadow-[#97BE5A]/30">
-              Our Products
+            <button className="px-8 py-3 bg-[#97BE5A] text-white rounded-full font-medium hover:bg-[#7fa34a] transition-colors shadow-lg hover:shadow-[#97BE5A]/30"
+          
+            onClick={handleOrderClick}>
+            
+             Our Products
             </button>
           </motion.div>
 
@@ -109,7 +122,7 @@ const CreativeSection = () => {
       </section>
 
       {/* Video Section */}
-      <section className="relative py-28 overflow-hidden bg-gradient-to-b from-gray-50 to-[#97BE5A]/10">
+      <section className="relative py-28 overflow-hidden bg-gradient-to-b from-gray-50 to-white">
         {/* عناصر ديكورية */}
         <div className="absolute -left-20 top-1/3 z-0 opacity-20">
           <svg width="200" height="200" viewBox="0 0 200 200" className="text-[#97BE5A]">

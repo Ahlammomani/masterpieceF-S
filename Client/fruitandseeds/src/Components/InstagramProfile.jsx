@@ -7,7 +7,7 @@ import logo from '../assets/logo.png';
 const InstagramProfile = () => {
   return (
     <section className="py-10 bg-white text-center">
-      <h2 className="text-3xl font-serif font-semibold mb-6 text-gray-800">Our Sweetest Moments</h2>
+      <h2 className="text-3xl font-serif font-semibold mb-6 text-[#97BE5A]">Our Sweetest Moments</h2>
 
       <div className="flex flex-col items-center justify-center gap-3 md:flex-row md:gap-6">
         {/* Profile Image */}
@@ -19,7 +19,8 @@ const InstagramProfile = () => {
           <img
             src={logo} // استبدليه بشعاركم إذا توفر
             alt="Fruit & Seeds Logo"
-            className="w-16 h-16 rounded-full border"
+            className="w-16 h-16 rounded-full  bg-gradient-to-tr from-[#feda75] via-[#d62976] to-[#4f5bd5]"
+
           />
         </a>
 

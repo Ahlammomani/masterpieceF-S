@@ -26,7 +26,7 @@ const Products = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-[#2C5F2D]">Product Inventory</h1>
+          <h1 className="text-3xl font-bold text-[#97BE5A]">Product Inventory</h1>
           <p className="text-gray-600">Manage your product catalog and stock levels</p>
         </div>
         <button

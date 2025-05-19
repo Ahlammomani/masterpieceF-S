@@ -15,11 +15,12 @@ const createPayment = async (req, res) => {
       amount,
       currency,
       paypalOrderId,
-      userId
+      userId,
+      deliveryDate
     } = req.body;
 
     // التحقق من صحة البيانات المدخلة
-    if (!paymentMethod || !address || !amount || !currency || !userId) {
+    if (!paymentMethod || !address || !amount || !currency || !userId || !deliveryDate) {
       await transaction.rollback();
       return res.status(400).json({ 
         success: false,
@@ -53,7 +54,8 @@ const createPayment = async (req, res) => {
       status: 'pending',
       city: address.city || 'Not specified',
       postalCode: address.postalCode || '00000',
-      country: address.country || 'Jordan'
+      country: address.country || 'Jordan',
+      deliveryDate,
     }, { transaction });
 
     // إنشاء سجل الدفع

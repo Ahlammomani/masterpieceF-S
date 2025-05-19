@@ -16,6 +16,7 @@ import NotFound from './Pages/NotFound';
 import Checkout from "./Pages/Checkout";
 import OrderConfirmation from './Pages/OrderConfirmation';
 import WhatsApp from "./Components/WhatsApp";
+import logo from './assets/logo.png';
 import { CookiesProvider } from 'react-cookie';
 
 const ConditionalLayout = ({ children }) => {
@@ -57,7 +58,7 @@ function App() {
         <Route path ="/Checkout" element ={<Checkout/>}/>
         <Route path="/profile" element={<Profile />} />
         <Route path="/Admin/*" element={<Admin />} />
-        <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Route path="/order-confirmation/:orderId" element={<OrderConfirmation />} />
         <Route path="/Details/:productId" element={<Details />} />
         {/* <Route path="/cart" element={<Cart />} /> */}
         <Route path="*" element={<NotFound />} />
@@ -68,8 +69,8 @@ function App() {
           position={{ bottom: "20px", right: "100px" }} // Offset to avoid overlap with chatbot
           phoneNumber="+962777730914" // Replace with your actual WhatsApp number
           profileName="Fruit and seeds"
-          profileImage="./assets/logo.png" // Replace with your actual profile image URL
-          welcomeText="Need direct assistance? Our farm experts are ready to help!"
+          profileImage={logo} // Replace with your actual profile image URL
+          welcomeText="Hello and welcome to Fruit and Seeds — your healthy sweet spot! We're here if you need any help"
         />
     </Router>
     </CookiesProvider>

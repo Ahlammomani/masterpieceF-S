@@ -53,7 +53,7 @@ const Footer = () => {
                 <h2 className="mb-6 text-sm font-semibold uppercase border-b border-[#97BE5A] pb-2">More</h2>
                 <ul className="font-medium">
                   <li className="mb-4">
-                    <Link to="/about" className="hover:text-[#FF8BA7] flex items-center justify-end">
+                    <Link to="/aboutus" className="hover:text-[#FF8BA7] flex items-center justify-end">
                       About
                       <span className="bg-[#FDFAF6] p-1 rounded-full ml-2 flex items-center justify-center w-6 h-6">
                         <span className="text-xs">i</span>
@@ -61,7 +61,7 @@ const Footer = () => {
                     </Link>
                   </li>
                   <li>
-                    <Link to="/contact" className="hover:text-[#FF8BA7] flex items-center justify-end">
+                    <Link to="/contactus" className="hover:text-[#FF8BA7] flex items-center justify-end">
                       Contact Us
                       <span className="bg-[#FDFAF6] p-1 rounded-full ml-2 flex items-center justify-center w-6 h-6">
                         <span className="text-xs">@</span>

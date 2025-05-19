@@ -379,9 +379,8 @@ const ContactUs = () => {
           viewport={{ once: true }}
         >
           <blockquote className="text-xl md:text-2xl font-medium italic" style={{ color: colors.dark }}>
-            "Nurture your mind with great thoughts. To believe in the heroic makes heroes."
+           "Healthy connections, like healthy desserts, begin with the right ingredients — let's connect"
           </blockquote>
-          <cite className="block mt-4 text-lg" style={{ color: colors.primary }}>— Benjamin Disraeli</cite>
         </motion.div>
       </motion.div>
     </div>

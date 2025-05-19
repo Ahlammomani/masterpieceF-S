@@ -75,7 +75,7 @@ const OverviewPage = () => {
   return (
     <div className="min-h-screen bg-[#FDFAF6] p-6">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold text-[#99BC85]">Dashboard Overview</h1>
+        <h1 className="text-2xl font-bold text-[#97BE5A]">Dashboard Overview</h1>
         {stats.lastUpdated && (
           <span className="text-sm text-[#97BE5A]">
             Last updated: {new Date(stats.lastUpdated).toLocaleTimeString()}

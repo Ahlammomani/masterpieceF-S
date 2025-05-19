@@ -41,6 +41,11 @@ const CheckoutPage = () => {
   const [position, setPosition] = useState(null);
   const [processing, setProcessing] = useState(false);
   const orderId = location.state?.orderId;
+  const [deliveryDate, setDeliveryDate] = useState(() => {
+  const today = new Date().toISOString().split('T')[0];
+  return today;
+});
+
 
   useEffect(() => {
     if (!cookies.token || !cookies.userId) {
@@ -125,9 +130,10 @@ const handlePayment = async (paypalOrderId = null) => {
           formatted: `Lat: ${position.lat.toFixed(5)}, Lng: ${position.lng.toFixed(5)}`
         },
         amount: order.totalPrice,
-        currency: 'USD',
+        currency: 'JD',
         paypalOrderId,
-        userId: cookies.userId
+        userId: cookies.userId,
+         deliveryDate: deliveryDate  // هنا التاريخ الجديد
       })
     });
 
@@ -156,7 +162,7 @@ const handlePayment = async (paypalOrderId = null) => {
       cancelButtonText: 'Continue Shopping'
     }).then((result) => {
       if (result.isConfirmed) {
-        window.location.href = `/order-confirmation/${data.data.orderId}`;
+        window.location.href = `/order-confirmation?orderId=${data.data.orderId}`;
       }
     });
 
@@ -215,7 +221,7 @@ const handlePayment = async (paypalOrderId = null) => {
                       <h3 className="text-lg font-medium">{item.product?.name}</h3>
                       <p className="text-gray-600">Qty: {item.quantity}</p>
                     </div>
-                    <p className="text-xl font-bold">${(item.product?.price * item.quantity).toFixed(2)}</p>
+                    <p className="text-xl font-bold">JD{(item.product?.price * item.quantity).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -251,6 +257,17 @@ const handlePayment = async (paypalOrderId = null) => {
                   )}
                 </div>
               </div>
+              <div className="mt-4">
+  <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Date</label>
+  <input
+    type="date"
+    className="border border-gray-300 rounded-md px-3 py-2 w-full"
+    value={deliveryDate}
+    min={new Date().toISOString().split('T')[0]} // يمنع التواريخ السابقة
+    onChange={(e) => setDeliveryDate(e.target.value)}
+  />
+</div>
+
             </div>
 
             {/* Payment Method Section */}

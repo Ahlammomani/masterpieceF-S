@@ -34,6 +34,7 @@ export default function VideoLesson() {
         {/* Top Text Section */}
         <div className="text-center mb-8">
           <h2 className="text-5xl text-[#FF8BA7] font-bold mb-2">Quick & Healthy Desserts for Kids</h2>
+           <p className="text-3xl text-[#FF8BA7] italic">from fruit & seeds....</p>
           <p className="text-3xl text-[#FF8BA7] italic">Tastes They'll Love, and Moms Can Trust!</p>
         </div>
         

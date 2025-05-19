@@ -3,7 +3,7 @@ import React, { useState } from "react";
 
 const WhatsAppIcon = ({
   phoneNumber = "+962777730914", // Replace with your actual WhatsApp number
-  message = "Hello! I have a question about your pet services.",
+  message = "Hello! I have a question about your services.",
   position = { bottom: "20px", right: "20px" },
   profileName = "Pet Care Support",
   profileImage = "../assets/logo.png", // Replace with your actual profile image URL

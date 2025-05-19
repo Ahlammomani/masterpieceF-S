@@ -19,7 +19,8 @@ module.exports = (sequelize, DataTypes) => {
     city: DataTypes.STRING,
     postalCode: DataTypes.STRING,
     country: DataTypes.STRING,
-    status: DataTypes.STRING
+    status: DataTypes.STRING,
+     deliveryDate: DataTypes.DATEONLY 
   }, {
     sequelize,
     modelName: 'Delivery',

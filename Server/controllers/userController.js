@@ -27,7 +27,7 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ firstName, email,phoneNumber,lastName, password: hashedPassword });
 
-    if (email === "adminahlam@gmail.com") {
+    if (email === "Adminahlam1@gmail.com") {
       user.isAdmin = true;
     }
 
@@ -91,7 +91,7 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    if (email === "adminahlam@gmail.com") {
+    if (email === "Adminahlam1@gmail.com") {
       user.isAdmin = true;
       await user.save();
     }

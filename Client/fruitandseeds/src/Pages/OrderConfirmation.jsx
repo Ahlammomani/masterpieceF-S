@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 
 const OrderConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { orderId: paramOrderId } = useParams();
   const [cookies] = useCookies(['token', 'userId']);
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const orderId = location.state?.orderId;
+  // الحصول على orderId من جميع المصادر الممكنة
+  const orderId = location.state?.orderId || paramOrderId;
 
   useEffect(() => {
     if (!cookies.token || !cookies.userId) {
@@ -24,16 +26,19 @@ const OrderConfirmation = () => {
 
     const fetchOrder = async () => {
       try {
-        const response = await fetch(`/api/orders/${orderId}`, {
+        const response = await fetch(`http://your-api-url/orders/${orderId}`, {
           headers: {
             'Authorization': `Bearer ${cookies.token}`
           }
         });
+
+        if (!response.ok) throw new Error('Order not found');
+        
         const data = await response.json();
         setOrder(data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching order:', error);
+        console.error('Error:', error);
         navigate('/');
       }
     };
@@ -42,58 +47,45 @@ const OrderConfirmation = () => {
   }, [orderId, cookies.token, cookies.userId, navigate]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
   }
 
   if (!order) {
-    return <div className="min-h-screen flex items-center justify-center">Order not found</div>;
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-500">Order Not Found</h2>
+          <button 
+            onClick={() => navigate('/')}
+            className="mt-4 bg-[#99BC85] text-white px-6 py-2 rounded-lg"
+          >
+            Return Home
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-2xl mx-auto text-center">
-        <div className="bg-white p-8 rounded-lg shadow-lg">
+      <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+        <div className="text-center">
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-            </svg>
+            ✅
           </div>
-          
           <h1 className="text-3xl font-bold text-[#99BC85] mb-4">Order Confirmed!</h1>
-          <p className="text-lg text-gray-600 mb-6">
-            Thank you for your purchase. Your order has been received and is being processed.
-          </p>
+          <p className="text-gray-600 mb-8">Your order #{order.id} has been placed successfully.</p>
           
-          <div className="bg-gray-50 p-6 rounded-lg mb-8 text-left">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">Order Details</h2>
-            
-            <div className="space-y-2">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Order Number:</span>
-                <span className="font-medium">#{order.id}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Date:</span>
-                <span className="font-medium">{new Date(order.createdAt).toLocaleDateString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Total:</span>
-                <span className="font-medium">${order.totalPrice.toFixed(2)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Payment Method:</span>
-                <span className="font-medium capitalize">{order.paymentMethod}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Status:</span>
-                <span className="font-medium capitalize">{order.status}</span>
-              </div>
-            </div>
+          <div className="text-left mb-8">
+            <h2 className="text-xl font-semibold mb-4">Order Details</h2>
+            <p><strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</p>
+            <p><strong>Total:</strong> ${order.totalPrice.toFixed(2)}</p>
+            <p><strong>Status:</strong> {order.status}</p>
           </div>
-          
+
           <button
             onClick={() => navigate('/')}
-            className="w-full md:w-auto bg-[#99BC85] text-white py-3 px-8 rounded-lg font-bold text-lg shadow hover:shadow-lg transition-all duration-300"
+            className="bg-[#99BC85] text-white px-6 py-2 rounded-lg hover:bg-[#88a76f]"
           >
             Continue Shopping
           </button>

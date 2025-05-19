@@ -72,10 +72,10 @@ const Login = () => {
           </div>
           
           <div className="space-y-2">
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
               <label className="block text-sm font-medium text-gray-700">Password</label>
               <a href="/forgot-password" className="text-xs text-[#97BE5A] hover:underline">Forgot password?</a>
-            </div>
+            </div> */}
             <div className="relative">
               <input 
                 className="w-full p-3 pl-10 bg-[#FDFAF6] bg-opacity-30 border border-[#E7CCCC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#97BE5A] transition" 
@@ -107,7 +107,7 @@ const Login = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 gap-3">
+          {/* <div className="grid grid-cols-2 gap-3">
             <button type="button" className="flex items-center justify-center p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
               <svg className="h-5 w-5 text-[#97BE5A]" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12.48 10.92v3.28h4.92c-.2 1.28-1.52 3.76-4.92 3.76-2.96 0-5.36-2.44-5.36-5.44s2.4-5.44 5.36-5.44c1.68 0 2.8.72 3.44 1.36l2.36-2.28c-1.52-1.4-3.48-2.24-5.8-2.24-4.8 0-8.68 3.88-8.68 8.64s3.88 8.64 8.68 8.64c5 0 8.32-3.52 8.32-8.48 0-.56-.08-1-.16-1.44h-8.16z" />
@@ -118,7 +118,7 @@ const Login = () => {
                 <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z" />
               </svg>
             </button>
-          </div>
+          </div> */}
           
           <div className="mt-4 text-center text-sm text-gray-600">
             Don't have an account? 

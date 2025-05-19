@@ -52,7 +52,7 @@ const Users = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-[#2C5F2D]">User Management</h1>
+            <h1 className="text-3xl font-bold text-[#97BE5A]">User Management</h1>
             <p className="text-gray-600">Manage all registered users</p>
           </div>
           <div className="relative w-full md:w-64">

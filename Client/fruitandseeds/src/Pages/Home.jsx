@@ -11,21 +11,24 @@ import  Search  from '../Components/search'
 // import Pic from '../Components/pic'
 import InstagramFeed from '../Components/InstagramFeed';
 import InstagramFeeds from '../Components/InstagramProfile';
+import ProductHome from '../Components/Producthome';
+
 const Home = () => {
   return (
     <div>
       <Hero/>
     <Search/>
-      {/* <Search/> */}
-      <div className="max-w-screen-xl mx-auto p-4 mb-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-          <img src={pic} alt="healthy dessert 1" className="w-full h-52 object-cover" />
-          <img src={pic1} alt="healthy dessert 2" className="w-full h-52 object-cover" />
-          <img src={pic2} alt="healthy dessert 3" className="w-full h-52 object-cover" />
-          <img src={pic3} alt="healthy dessert 4" className="w-full h-52 object-cover" />
-          <img src={pic4} alt="healthy dessert 5" className="w-full h-52 object-cover" />
+     
+      <div className="max-w-screen-xl mx-auto p-2 sm:p-4 mb-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-4">
+          <img src={pic} alt="healthy dessert 1" className="w-full h-32 sm:h-40 md:h-48 lg:h-52 " />
+          <img src={pic1} alt="healthy dessert 2" className="w-full h-32 sm:h-40 md:h-48 lg:h-52 " />
+          <img src={pic2} alt="healthy dessert 3" className="w-full h-32 sm:h-40 md:h-48 lg:h-52 " />
+          <img src={pic3} alt="healthy dessert 4" className="w-full h-32 sm:h-40 md:h-48 lg:h-52 " />
+          <img src={pic4} alt="healthy dessert 5" className="w-full h-32 sm:h-40 md:h-48 lg:h-52 " />
         </div>
       </div>
+      <ProductHome/>
       <FAQ/>
       <Viedokides/>
       <InstagramFeeds/>
