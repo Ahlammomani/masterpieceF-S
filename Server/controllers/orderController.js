@@ -138,9 +138,16 @@ exports.getOrder = async (req, res) => {
 exports.getAllOrders = async (req, res) => {
   try {
     const { search, status, page = 1, pageSize = 10 } = req.query;
+    const offset = (page - 1) * pageSize;
     
-    // Initialize whereClause
     let whereClause = {};
+    let includeOptions = [
+      {
+        model: OrderItem,
+        include: [Product],
+        required: false
+      }
+    ];
     
     if (status && status !== 'all') {
       whereClause.status = status;
@@ -148,27 +155,40 @@ exports.getAllOrders = async (req, res) => {
 
     if (search) {
       whereClause[Op.or] = [
-        { id: { [Op.like]: `%${search}%` } },
-        { '$orderItems.product.name$': { [Op.like]: `%${search}%` } }
+        { id: { [Op.like]: `%${search}%` } }
       ];
+      
+      // Add search to product name in include
+      includeOptions[0].where = {
+        [Op.or]: [
+          { '$product.name$': { [Op.like]: `%${search}%` } }
+        ]
+      };
     }
 
     const { count, rows } = await Order.findAndCountAll({
       where: whereClause,
-      include: [
-        {
-          model: OrderItem,
-          include: [Product],
-          required: search ? true : false
-        }
-      ],
+      include: includeOptions,
+      distinct: true, // Important for correct count when using includes
       limit: parseInt(pageSize),
-      offset: (page - 1) * pageSize,
+      offset: offset,
       order: [['createdAt', 'DESC']]
     });
 
+    // Ensure all prices are numbers
+    const orders = rows.map(order => {
+      return {
+        ...order.get({ plain: true }),
+        totalPrice: Number(order.totalPrice) || 0,
+        orderItems: order.orderItems?.map(item => ({
+          ...item.get({ plain: true }),
+          price: Number(item.price) || 0
+        })) || []
+      };
+    });
+
     res.json({
-      orders: rows,
+      orders,
       total: count,
       page: parseInt(page),
       pageSize: parseInt(pageSize)

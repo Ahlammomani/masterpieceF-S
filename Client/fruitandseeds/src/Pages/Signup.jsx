@@ -17,7 +17,14 @@ const Signup = () => {
 
     try {
       const response = await API.post("/users/signup", user, { withCredentials: true });
+       const isAdmin = response.data.isAdmin;
+
+    if (isAdmin) {
+      navigate('/Admin/*'); // 👈 عدل هذا حسب مسار داشبورد الأدمن عندك
+    } else {
       navigate('/');
+    }
+     
     } catch (err) {
   console.log("Signup Error:", err.response?.data);
 

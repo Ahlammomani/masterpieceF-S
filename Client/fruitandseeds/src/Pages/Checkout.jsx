@@ -203,7 +203,7 @@ const handlePayment = async (paypalOrderId = null) => {
 
   return (
     <PayPalScriptProvider options={{ 
-      "client-id": "AVYvR10qmkdmsF_YA9LW6FaMXeCo-nBhAtazvDTAiktMQ4vPytPqdfJrh5rbh_IDqG13h34ycUvKoY0Z",
+      "client-id": 'AVYvR10qmkdmsF_YA9LW6FaMXeCo-nBhAtazvDTAiktMQ4vPytPqdfJrh5rbh_IDqG13h34ycUvKoY0Z',
       currency: "USD"
     }}>
       <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
@@ -305,33 +305,40 @@ const handlePayment = async (paypalOrderId = null) => {
               {paymentMethod === 'card' ? (
                 <div className="mt-6">
                   <PayPalButtons
-                    style={{ layout: 'vertical' }}
-                    createOrder={(data, actions) => {
-                      return actions.order.create({
-                        purchase_units: [
-                          {
-                            amount: {
-                              value: order.totalPrice.toFixed(2),
-                              currency_code: "USD"
-                            },
-                          },
-                        ],
-                      });
-                    }}
-                    onApprove={async (data, actions) => {
-                      try {
-                        const details = await actions.order.capture();
-                        await handlePayment(data.orderID);
-                      } catch (err) {
-                        console.error("PayPal approval error:", err);
-                        alert("Payment processing failed. Please try again.");
-                      }
-                    }}
-                    onError={(err) => {
-                      console.error("PayPal error:", err);
-                      alert("Failed to initialize PayPal. Please try another payment method.");
-                    }}
-                  />
+                style={{
+                  color: "gold",
+                  shape: "rect",
+                  label: "pay",
+                  height: 40
+                }}
+                createOrder={(data, actions) => {
+                  return actions.order.create({
+                    purchase_units: [
+                      {
+                        amount: {
+                          value: order.totalPrice.toFixed(2),
+                          currency_code: "USD"
+                        },
+                      },
+                    ],
+                  });
+                }}
+                 onApprove={(data, actions) => {
+    return actions.order.capture().then((details) => {
+      handlePayment(data.orderID); // Call handlePayment with the PayPal order ID
+    });
+  }}
+  onError={(err) => {
+    console.error("PayPal error:", err);
+    Swal.fire({
+      icon: 'error',
+      title: 'Payment Error',
+      text: 'An error occurred during PayPal payment processing',
+      confirmButtonColor: '#d33',
+    });
+  }}
+               
+              />
                 </div>
               ) : (
                 <button

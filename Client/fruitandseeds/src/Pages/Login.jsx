@@ -15,10 +15,16 @@ const Login = () => {
  const response = await API.post("/users/login", user, {
   withCredentials: true
 });
+ const isAdmin = response.data.isAdmin;
+
+    if (isAdmin) {
+      navigate('/Admin/*'); 
+      navigate('/');
+    }
     // احفظ التوكن وبيانات المستخدم
     // setCookie('token', response.data.token, { path: '/' });
     // setCookie('user', response.data.user, { path: '/' });
-    navigate('/');
+   
   } catch (err) {
     setError(err.response?.data?.message || "An error occurred!");
   }

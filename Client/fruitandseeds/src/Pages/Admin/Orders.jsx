@@ -39,13 +39,14 @@ const Orders = () => {
           pageSize: pagination.pageSize,
         },
       });
-      setOrders(response.data.orders);
+      setOrders(response.data.orders || []); // Ensure orders is always an array
       setPagination({
         ...pagination,
         total: response.data.total,
       });
     } catch (error) {
       console.error('Error fetching orders:', error);
+      setOrders([]); // Set to empty array on error
     } finally {
       setLoading(false);
     }
@@ -81,20 +82,20 @@ const Orders = () => {
       key: 'items',
       render: (items) => (
         <Badge 
-          count={items.length} 
+          count={items?.length || 0} // Add null check for items
           style={{ backgroundColor: '#FF8BA7' }}
           className="font-semibold"
         />
       ),
       width: 100,
     },
-    {
-      title: 'Total',
-      dataIndex: 'totalPrice',
-      key: 'total',
-      render: (price) => <span className="font-semibold">${price.toFixed(2)}</span>,
-      width: 120,
-    },
+   {
+  title: 'Total',
+  dataIndex: 'totalPrice',
+  key: 'total',
+  render: (price) => <span className="font-semibold">${(Number(price) || 0).toFixed(2)}</span>,
+  width: 120,
+},
     {
       title: 'Status',
       dataIndex: 'status',
@@ -121,7 +122,7 @@ const Orders = () => {
       key: 'payment',
       render: (method) => (
         <Tag 
-          color={paymentColors[method.toLowerCase()] || '#d9d9d9'}
+          color={paymentColors[method?.toLowerCase()] || '#d9d9d9'} // Add null check for method
           style={{
             padding: '0 8px',
             borderRadius: '12px',
@@ -179,7 +180,7 @@ const Orders = () => {
                 className="w-10 h-10 object-cover rounded mr-3"
               />
             )}
-            <span>{record.product?.name}</span>
+            <span>{record.product?.name || 'N/A'}</span> {/* Add fallback for product name */}
           </div>
         ),
       },
@@ -189,7 +190,7 @@ const Orders = () => {
         key: 'quantity',
         render: (quantity) => (
           <Badge 
-            count={quantity} 
+            count={quantity || 0} // Add null check for quantity
             style={{ backgroundColor: '#97BE5A' }}
             className="font-semibold"
           />
@@ -199,13 +200,13 @@ const Orders = () => {
         title: 'Unit Price',
         dataIndex: 'price',
         key: 'price',
-        render: (price) => `$${price.toFixed(2)}`,
+        render: (price) => `$${(price || 0).toFixed(2)}`, // Add null check for price
       },
       {
         title: 'Subtotal',
         key: 'subtotal',
         render: (_, record) => (
-          <span className="font-semibold">${(record.price * record.quantity).toFixed(2)}</span>
+          <span className="font-semibold">${((Number(record.price) || 0) * (Number(record.quantity) || 0)).toFixed(2)}</span>// Add null checks
         ),
       },
     ];
@@ -213,7 +214,7 @@ const Orders = () => {
     return (
       <Table
         columns={columns}
-        dataSource={order.orderItems}
+        dataSource={order.orderItems || []} // Ensure orderItems is always an array
         pagination={false}
         size="small"
         style={{ backgroundColor: '#FDFAF6' }}
@@ -229,20 +230,22 @@ const Orders = () => {
           <div className="flex items-center">
             <span className="text-xl font-semibold">Orders Management</span>
             <span className="ml-2 text-sm text-gray-500">
-              {pagination.total} total orders
+              {pagination.total || 0} total orders {/* Add fallback for total */}
             </span>
           </div>
         }
         className="shadow-sm"
-        headStyle={{
-          backgroundColor: '#99BC85',
-          color: '#FDFAF6',
-          borderTopLeftRadius: '8px',
-          borderTopRightRadius: '8px',
-          padding: '16px 24px',
-        }}
-        bodyStyle={{
-          padding: '24px',
+        styles={{
+          header: {
+            backgroundColor: '#99BC85',
+            color: '#FDFAF6',
+            borderTopLeftRadius: '8px',
+            borderTopRightRadius: '8px',
+            padding: '16px 24px',
+          },
+          body: {
+            padding: '24px',
+          },
         }}
       >
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
@@ -312,7 +315,7 @@ const Orders = () => {
         />
       </Card>
 
-      <style jsx global>{`
+      <style jsx="true" global="true">{` // Fix boolean attributes by using strings
         .custom-antd-table .ant-table-thead > tr > th {
           background-color: #f8f9fa;
           font-weight: 600;

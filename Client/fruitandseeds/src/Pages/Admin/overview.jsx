@@ -14,41 +14,45 @@ const OverviewPage = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        setLoading(true);
-        
-        // Check cache first
-        const cachedStats = localStorage.getItem('dashboardStats');
-        if (cachedStats) {
-          const parsedStats = JSON.parse(cachedStats);
-          // Refresh if data is older than 5 minutes
-          if (Date.now() - parsedStats.lastUpdated < 300000) {
-            setStats(parsedStats);
-            setLoading(false);
-            return;
-          }
-        }
-
-        const response = await axios.get('http://localhost:5000/api/overview/stats');
-        const newStats = {
-          users: response.data.users || 0,
-          orders: response.data.orders || 0,
-          products: response.data.products || 0,
-          revenue: response.data.revenue || 0,
-          lastUpdated: Date.now()
-        };
-        
-        setStats(newStats);
-        localStorage.setItem('dashboardStats', JSON.stringify(newStats));
-        
-      } catch (err) {
-        console.error('Failed to load stats:', err);
-        setError('Failed to load dashboard data. Using cached data if available.');
-      } finally {
+   const fetchStats = async () => {
+  try {
+    setLoading(true);
+    
+    const cachedStats = localStorage.getItem('dashboardStats');
+    if (cachedStats) {
+      const parsedStats = JSON.parse(cachedStats);
+      if (Date.now() - parsedStats.lastUpdated < 300000) {
+        setStats(parsedStats);
         setLoading(false);
+        return;
       }
-    };
+    }
+
+    const response = await axios.get('http://localhost:5000/api/overview/stats', {
+      withCredentials: true // This is crucial for sending cookies
+    });
+    
+   const newStats = {
+  users: response.data.data?.users ?? 0, // Nullish coalescing operator
+  orders: response.data.data?.orders ?? 0,
+  products: response.data.data?.products ?? 0,
+  revenue: response.data.data?.revenue ?? 0,
+  lastUpdated: Date.now()
+};
+    setStats(newStats);
+    localStorage.setItem('dashboardStats', JSON.stringify(newStats));
+    
+  } catch (err) {
+    console.error('Failed to load stats:', err);
+    if (err.response?.status === 403) {
+      setError('Session expired. Please login again.');
+    } else {
+      setError('Failed to load dashboard data. Using cached data if available.');
+    }
+  } finally {
+    setLoading(false);
+  }
+};
 
     fetchStats();
 
@@ -90,32 +94,40 @@ const OverviewPage = () => {
       )}
       
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-        <StatCard 
-          title="Total Users" 
-          value={stats.users.toLocaleString()} 
-          trend="↑ 12%"
-          color="bg-[#99BC85]"
-        />
-        <StatCard 
-          title="Total Orders" 
-          value={stats.orders.toLocaleString()} 
-          trend="↑ 5%"
-          color="bg-[#97BE5A]"
-        />
-        <StatCard 
-          title="Products" 
-          value={stats.products.toLocaleString()} 
-          trend="→"
-          color="bg-[#99BC85]"
-        />
-        <StatCard 
-          title="Revenue" 
-          value={`$${stats.revenue.toLocaleString()}`} 
-          trend="↑ 18%"
-          color="bg-[#97BE5A]"
-        />
-      </div>
+     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+  {!loading ? (
+    <>
+      <StatCard 
+        title="Total Users" 
+        value={stats.users?.toLocaleString() ?? "0"} 
+        trend="↑ 12%"
+        color="bg-[#99BC85]"
+      />
+      <StatCard 
+        title="Total Orders" 
+        value={stats.orders?.toLocaleString() ?? "0"} 
+        trend="↑ 5%"
+        color="bg-[#97BE5A]"
+      />
+      <StatCard 
+        title="Products" 
+        value={stats.products?.toLocaleString() ?? "0"} 
+        trend="→"
+        color="bg-[#99BC85]"
+      />
+      <StatCard 
+        title="Revenue" 
+        value={`$${stats.revenue?.toLocaleString() ?? "0"}`} 
+        trend="↑ 18%"
+        color="bg-[#97BE5A]"
+      />
+    </>
+  ) : (
+    [...Array(4)].map((_, i) => (
+      <div key={i} className="bg-gray-200 animate-pulse h-24 rounded-lg"></div>
+    ))
+  )}
+</div>
       
       {/* Chart Section */}
       <div className="bg-white rounded-lg p-6 shadow-sm border border-[#FDFAF6]">
