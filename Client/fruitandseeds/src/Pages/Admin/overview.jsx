@@ -162,8 +162,8 @@ const StatCard = ({ title, value, trend, color }) => (
   <div className={`${color} bg-opacity-20 rounded-lg p-5 shadow-sm transition-all hover:shadow-md`}>
     <div className="flex justify-between items-start">
       <div>
-        <h3 className="text-sm font-medium text-[#99BC85] mb-1">{title}</h3>
-        <p className="text-2xl font-bold text-[#97BE5A]">{value}</p>
+        <h3 className="text-sm font-medium text-white mb-1">{title}</h3>
+        <p className="text-2xl font-bold text-white">{value}</p>
       </div>
       <span className={`text-xs px-2 py-1 rounded-full ${
         trend.includes('↑') ? 'bg-green-100 text-green-800' :
