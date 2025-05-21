@@ -68,13 +68,3 @@ app.listen(PORT, () => {
 });
 
 
-// Routes
-// app.use('/users', userRoutes)
-// //app.use('/auth', google);
-// app.use("/api/products", productRoutes);
-// app.use("/api/categories", categoryRoutes);
-// app.use('/api/product-categories', productCategoryRoutes);
-// app.use('/api/images',imageRoutes);
-// app.use('/api', reviewRoutes);
-// app.use('/api/cart', Cart);
-// app.use('/api/orders',Order);

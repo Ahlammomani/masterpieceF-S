@@ -5,8 +5,8 @@ module.exports = {
   async up (queryInterface, Sequelize) {
  await queryInterface.addColumn('Users', 'role', {
       type: Sequelize.STRING,
-      allowNull: true, // أو false حسب رغبتك
-      defaultValue: 'user', // أو null إذا بدك تعينيه لاحقًا
+      allowNull: true, 
+      defaultValue: 'user', 
     });
   },
 

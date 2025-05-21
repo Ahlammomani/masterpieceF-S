@@ -19,7 +19,7 @@ exports.signup = async (req, res) => {
   console.log("🔴 Received data:", req.body);
 
  try {
-  const existingUser = await User.findOne({ where: { email } }); // تحديد `where` بشكل صحيح
+  const existingUser = await User.findOne({ where: { email } }); 
   if (existingUser) {
     return res.status(400).json({ message: "Email already in use" });
   }
@@ -27,7 +27,7 @@ exports.signup = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({ firstName, email,phoneNumber,lastName, password: hashedPassword });
 
-    if (email === "Adminahlam@gmail.com") {
+    if (email === "Adminahlam1@gmail.com") {
       user.isAdmin = true;
     }
 
@@ -91,10 +91,10 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    if (email === "Adminahlam@gmail.com") {
-      user.isAdmin = true;
-      await user.save();
-    }
+   if (email === "Adminahlam1@gmail.com" && !user.isAdmin) {
+  user.isAdmin = true;
+  await user.save();
+}
 
     const token = jwt.sign(
       { userId: user.id, isAdmin: user.isAdmin, firstName: user.firstName, email: user.email },
@@ -123,7 +123,7 @@ exports.login = async (req, res) => {
       firstName: user.firstName,
       token,
       email: user.email,
-      userId: user._id,
+      userId: user.id,
       isAdmin: user.isAdmin,
     });
 

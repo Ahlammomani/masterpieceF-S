@@ -71,7 +71,7 @@ const replyToContact = async (req, res) => {
     await contact.save();
 
     const mailOptions = {
-      from: 'Adminahlam@gmail.com',
+      from: 'Adminahlam1@gmail.com',
       to: contact.email,
       subject: 'Reply to your message',
       text: replyMessage,

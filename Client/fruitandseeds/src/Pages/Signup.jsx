@@ -20,7 +20,7 @@ const Signup = () => {
        const isAdmin = response.data.isAdmin;
 
     if (isAdmin) {
-      navigate('/Admin/*'); // 👈 عدل هذا حسب مسار داشبورد الأدمن عندك
+      navigate('/Admin/*'); 
     } else {
       navigate('/');
     }
